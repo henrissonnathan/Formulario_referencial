@@ -1,0 +1,120 @@
+.colorase {
+  color: #8a2be2;
+  /* Roxo */
+  transition: color 0.3s;
+  /* Adiciona uma transição suave na mudança de cor */
+
+}
+
+.colorase:hover {
+  color: #006400;
+  /* Verde Escuro quando hover */
+
+}
+
+.navbar {
+  background-color: #FFFFFF !important;
+  /* Fundo Branco */
+  border-bottom: 2px solid #8a2be2;
+  /* Borda Roxa Escuro */
+}
+
+.navbar-toggler-icon {
+  background-color: #8a2be2;
+  /* Ícone do botão Roxo */
+  transition: background-color 0.3s;
+  /* Adiciona uma transição suave na mudança de cor do ícone */
+}
+
+.navbar-toggler:hover .navbar-toggler-icon {
+  background-color: #006400;
+  /* Ícone do botão Verde Escuro quando hover */
+}
+
+.navbar-nav .nav-link {
+  color: #8a2be2 !important;
+  /* Cor Roxa para os links da navegação */
+}
+
+.navbar-nav .nav-link:hover {
+  color: #006400 !important;
+  /* Cor Verde Escuro quando hover */
+}
+
+.card {
+  border-radius: 5;
+
+  box-shadow: 0 0 15px #8a2be2 !important;
+}
+
+.btn {
+  border-radius: 0;
+}
+
+.card .titulo {
+  height: 50px;
+}
+
+.alert {
+  margin-top: 10px;
+}
+
+n {
+  font-weight: bold;
+}
+
+/* Cor roxa para TODAS as opções */
+select.form-control option {
+  color: #e28a2b;
+  /* Roxo */
+  background-color: white;
+  /* Fundo branco para contraste */
+}
+
+/* Cor roxa para o texto do select quando aberto */
+select.form-control {
+  color: #e28a2b;
+}
+
+/* Cor branca para a opção selecionada (melhor legibilidade) */
+select.form-control option:checked {
+  color: white;
+  background-color: #8a2be2;
+}
+
+.borda {
+  border: 2px solid #8a2be2;
+  padding: 5px;
+}
+
+.container {
+  border: 1px solid #8a2be2;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 1px 1px 10px #7c1ed3;
+}
+
+label {
+  color: #e28a2b !important;
+}
+strong{
+  color: #e28a2b !important;
+}
+button[type="submit"]{
+  color:#e28a2b !important;
+  border-radius: 2pix;
+  border-color: #e28a2b;
+  background-color:#e6e6fa ;
+}
+select.form-control option:hover {
+  background-color: transparent !important;
+  color: inherit !important;
+}
+#resposta-container {
+  transition: all 0.3s ease;
+}
+
+.borda {
+  border: 1px solid #8a2be2;
+  padding: 8px;
+}
