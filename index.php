@@ -18,6 +18,7 @@ date_default_timezone_set('America/Sao_Paulo');
     <base href="<?= $base ?>formulario">
 
     <!----- arquivos css ---->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/all.min.css">
     <link rel="stylesheet" href="css/datatables.min.css">
@@ -36,6 +37,7 @@ date_default_timezone_set('America/Sao_Paulo');
     <script src="js/sweetalert2.js"></script>
     <script src="js/scripts.js"></script>
     <script src="js/vanilla-masker.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 </head>
 
 <body>
@@ -88,3 +90,6 @@ date_default_timezone_set('America/Sao_Paulo');
 </html>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/5.0.6/jquery.inputmask.min.js"></script>

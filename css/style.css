@@ -143,3 +143,16 @@ parametro-item {
 input{
   border: 1px solid #006400;
 }
+.drag-drop-area {
+  border: 2px dashed #8a2be2 !important;
+  transition: all 0.3s;
+}
+
+.drag-drop-area.dragover {
+  background-color: #f0f0ff;
+  border-color: #6c1d9b !important;
+}
+
+.file-upload-container {
+  max-width: 500px;
+}

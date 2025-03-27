@@ -1,6 +1,7 @@
 <?php
 if (!isset($pagina)) {
     exit;
+    
 }
 ?>
 <?php
@@ -56,39 +57,47 @@ $selectOptions = require __DIR__ . '/../configs/select-options.php';
             </div>
 
 
-
+            <div class="mb-4">
+                <div class="file-upload-container border p-3 rounded bg-light">
+                    <label class="form-label">Importar Tabela:</label>
+                    <div class="drag-drop-area border rounded p-4 text-center mb-3">
+                        Arraste o arquivo aqui ou
+                        <input type="file" id="file-input" accept=".csv, .xlsx, .xls" class="form-control mt-2">
+                    </div>
+                    <small class="text-muted">Formatos suportados: CSV, XLSX (Excel), XLS (Excel antigo)</small>
+                </div>
+            </div>
             <br>
             <h5 class="mt-4">Itens</h5>
 
             <!-- tabela-->
             <table id="tabela-itens" class="table table-bordered">
-                <thead class="table-color">
-                    <tr>
-                        <th>ID</th>
-                        <th>Item</th>
-                        <th>Unid.</th>
-                        <th>Qtd.</th>
-                        <th>Valor Unit</th>
-                        <th>Total Item</th>
-                        <th>Descrição</th>
-                        <th>Obs.</th>
-                        <th>Ações</th>
-                    </tr>
-                </thead>
+            <thead class="table-color">
+                <tr>
+            <th>ID</th>
+            <th>Item</th>
+            <th>Unid.</th>
+            <th>Qtd.</th>
+            <th>Valor Unit</th>
+            <th>Total Item</th>
+            <th>Descrição</th>
+            <th>Obs.</th>
+            <th>Ações</th>
+                </tr>
+            </thead>
                 <tbody>
-                    <!--Linha inicial -->
+                    <!--Linha inicial  esta assim par no import não ter uma linha amis
                     <tr>
-                        <td>1</td>
-                        <td><input type="text" name="item[]" class="form-control" required></td>
-
-                        <td><input type="text" name="unid[]" class="form-control unidade" value="UN" required></td>
-
-                        <td><input type="number" name="qtd[]" class="form-control qtd-inteiro" min="1" value="1" required></td>
-                        <td><input type="text" name="valor_unitario[]" class="form-control money-mask" required></td>
-                        <td class="total-item">0,00</td>
-                        <td><input type="text" name="descricao[]" class="form-control"></td>
-                        <td><input type="text" name="obs[]" class="form-control"></td>
-                    </tr>
+                <td>1</td>
+                <td><input type="text" name="item[]" class="form-control" required></td>
+                <td><input type="text" name="unid[]" class="form-control unidade" value="UN" required></td>
+                <td><input type="number" name="qtd[]" class="form-control qtd-inteiro" min="1" value="1" required></td>
+                <td><input type="text" name="valor_unitario[]" class="form-control money-mask" required></td>
+                <td class="total-item">0,00</td>
+                <td><input type="text" name="descricao[]" class="form-control"></td>
+                <td><input type="text" name="obs[]" class="form-control"></td>
+                <td><button type="button" class="btn btn-danger btn-sm remover-linha"><i class="fas fa-trash"></i></button></td>
+                    </tr>-->
                 </tbody>
             </table>
 
@@ -106,17 +115,13 @@ $selectOptions = require __DIR__ . '/../configs/select-options.php';
                     <div class="col-md-6">
                         <h5>Total Geral: <span id="total-geral">0,00</span></h5>
                     </div>
-                    <div class="col-md-6 text-end">
-                        <button type="button" id="calcular-total" class="btn btn-primary">
-                            <i class="fas fa-calculator"></i> Calcular Total
-                        </button>
-                    </div>
+
                 </div>
             </div>
 
             <!-- Modalidade-->
             <label for="modalidade">MODALIDADE</label>
-            <select name="modalidade" id="modalidade" class="form-control borda  toggle-trigger" required data-parsley-required-message="Por favor, selecione uma opisão" data-toggle-target="#modal" data-toggle-values='["Licitação","Inexigibilidade e licitação","Chamamento público"]'>
+            <select name="modalidade" id="modalidade" class="form-control borda  toggle-trigger" required data-parsley-required-message="Por favor, selecione uma opisão" data-toggle-target="#modal" data-toggle-values='["Licitação","Inexigibilidade e licitação","Chamamento público",""]'>
                 <option value="">Selecione uma opção</option>
                 <?php foreach ($selectOptions['modalidade'] as $value => $label): ?>
                     <option value="<?= $value ?>"><?= $label ?></option>
@@ -209,7 +214,7 @@ $selectOptions = require __DIR__ . '/../configs/select-options.php';
             </button>
 
 
-            <!--Orçamento-->
+            <!--Orçamento fas fa-ca-->
             <label for="orcamento">FOI OBTIDO ORÇAMENTO COM, NO MÍNIMO, 03 FORNECEDORES ENQUADRADOS COMO MPE LOCAL OU REGIONAL OU, DE OUTRA FORMA, HÁ COMPROVAÇÃO DE QUE HÁ 03 FORNECEDORES MPE LOCAL OU REGIONAL?</label>
             <select name="orcamento" id="orcamento" class="form-control borda" required data-parsley-required-message="Por favor, selecione uma opisão">
                 <option value="">Selecione uma opção</option>
@@ -217,6 +222,7 @@ $selectOptions = require __DIR__ . '/../configs/select-options.php';
                     <option value="<?= $value ?>"><?= $label ?></option>
                 <?php endforeach; ?>
             </select>
+
             <!--retrisão territorial -->
             <label for="retricao">VAI SER APLICADA RESTRIÇÃO TERRITORIAL?</label>
             <select name="retricao" id="retricao" class="form-control borda toggle-trigger" required data-parsley-required-message="Por favor, selecione uma opisão" data-toggle-target="#terri" data-toggle-values='["sim. Restrição regional","sim. Restrição local","Outros"]'>
@@ -242,8 +248,8 @@ $selectOptions = require __DIR__ . '/../configs/select-options.php';
                     <option value="<?= $value ?>"><?= $label ?></option>
                 <?php endforeach; ?>
             </select>
-            
-            
+
+
             <!--FORMA DE SELEÇÃO*-->
             <label for="selecao">FORMA DE SELEÇÃO:</label>
             <select name="selecao" id="selecao" class="form-control borda toggle-trigger" required data-parsley-required-message="Por favor, selecione uma opisão" data-toggle-target="#selecasta" data-toggle-values='["Presencial","Sem disputas"]'>
@@ -254,7 +260,7 @@ $selectOptions = require __DIR__ . '/../configs/select-options.php';
             </select>
             <div id="selecasta" class="toggleable-field" style="display:none;">
                 <label for="seleca-esxpli">justifique</label>
-                 <input type="text" name="seleca-expli" id="seleca-expli" class="form-control borda" placeholder="justifique">
+                <input type="text" name="seleca-expli" id="seleca-expli" class="form-control borda" placeholder="justifique">
             </div>
 
 
@@ -290,94 +296,212 @@ $selectOptions = require __DIR__ . '/../configs/select-options.php';
             <label for="local">LOCAL DE EXECUÇÃO</label>
             <input type="text" name="local" id="local" class="form-control borda" placeholder="Digite a local" required data-parsley-required-message="Por favor, preencha o local">
 
-            <table class="table table-bordered" style="width: 100%;">
-                <!-- Cabeçalho Principal -->
-                <table class="table table-bordered" style="width: 100%;">
-                    <!-- Linha 1 - Cabeçalhos -->
-                    <tr>
-                        <th>UNIDADE REQUISITANTE</th>
-                        <th>MATRÍCULA FISCAL</th>
-                        <th>NOME DO FISCAL</th>
-                        <th>MATRÍCULA GESTOR</th>
-                        <th>NOME DO GESTOR</th>
-                    </tr>
 
-                    <!-- Linha 2 - Campos de Resposta -->
-                    <tr>
-                        <td>
-                            <select name="proposta" id="proposta" class="form-control borda" required data-parsley-required-message="Por favor, selecione uma opisão">
-                                <option value="">Selecione uma opção</option>
-                                <?php foreach ($selectOptions['requisitante'] as $value => $label): ?>
-                                    <option value="<?= $value ?>"><?= $label ?></option>
-                                <?php endforeach; ?>
-                                <!-- Adicione outras opções -->
-                            </select>
-                        </td>
-                        <td><input type="text" class="form-control" name="matricula_fiscal"></td>
-                        <td><input type="text" class="form-control" name="nome_fiscal"></td>
-                        <td><input type="text" class="form-control" name="matricula_gestor"></td>
-                        <td><input type="text" class="form-control" name="nome_gestor"></td>
-                    </tr>
 
-                    <!-- Linha 3 - Responsável ETP -->
-                    <tr>
-                        <th>RESPONSÁVEL PELO ETP</th>
-                        <th colspan="2">MATRÍCULA</th>
-                        <th colspan="2">NOME</th>
-                    </tr>
+            <!-- UNIDADE REQUISITANTE -->
+            <div class="mb-3">
+                <label for="proposta" class="form-label">UNIDADE REQUISITANTE</label>
+                <select name="proposta" id="proposta" class="form-control borda" required data-parsley-required-message="Por favor, selecione uma opção">
+                    <option value="">Selecione uma opção</option>
+                    <?php foreach ($selectOptions['requisitante'] as $value => $label): ?>
+                        <option value="<?= $value ?>"><?= $label ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
 
-                    <!-- Linha 4 - Campos do Responsável ETP -->
-                    <tr>
-                        <td></td>
-                        <td colspan="2"><input type="text" class="form-control" name="matricula_etp"></td>
-                        <td colspan="2"><input type="text" class="form-control" name="nome_etp"></td>
-                    </tr>
-                    <tr>
-                        <th>RESPONSÁVEL PELO DFD</th>
-                        <th colspan="2">MATRÍCULA</th>
-                        <th colspan="2">NOME</th>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td colspan="2"><input type="text" class="form-control" name="matricula_dfd"></td>
-                        <td colspan="2"><input type="text" class="form-control" name="nome_dfd"></td>
-                    </tr>
+            <!-- RESPONSÁVEL PELO ETP -->
+            <div class="mb-3">
+                <label class="form-label">RESPONSÁVEL PELO ETP</label>
+                <div class="row">
+                    <div class="col-md-6">
+                        <label for="matricula_etp" class="form-label">Matrícula</label>
+                        <input type="text" class="form-control" name="matricula_etp" id="matricula_etp">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="nome_etp" class="form-label">Nome</label>
+                        <input type="text" class="form-control" name="nome_etp" id="nome_etp">
+                    </div>
+                </div>
+            </div>
 
-                    <!-- Responsável pelo Levantamento de Preço -->
-                    <tr>
-                        <th>RESPONSÁVEL PELO LEVANTAMENTO DE PREÇO</th>
-                        <th colspan="2">MATRÍCULA</th>
-                        <th colspan="2">NOME</th>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td colspan="2"><input type="text" class="form-control" name="matricula_preco"></td>
-                        <td colspan="2"><input type="text" class="form-control" name="nome_preco"></td>
-                    </tr>
-                </table>
+            <!-- RESPONSÁVEL PELO DFD -->
+            <div class="mb-3">
+                <label class="form-label">RESPONSÁVEL PELO DFD</label>
+                <div class="row">
+                    <div class="col-md-6">
+                        <label for="matricula_dfd" class="form-label">Matrícula</label>
+                        <input type="text" class="form-control" name="matricula_dfd" id="matricula_dfd">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="nome_dfd" class="form-label">Nome</label>
+                        <input type="text" class="form-control" name="nome_dfd" id="nome_dfd">
+                    </div>
+                </div>
+            </div>
+
+            <!-- RESPONSÁVEL PELO LEVANTAMENTO DE PREÇO -->
+            <div class="mb-3">
+                <label class="form-label">RESPONSÁVEL PELO LEVANTAMENTO DE PREÇO</label>
+                <div class="row">
+                    <div class="col-md-6">
+                        <label for="matricula_preco" class="form-label">Matrícula</label>
+                        <input type="text" class="form-control" name="matricula_preco" id="matricula_preco">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="nome_preco" class="form-label">Nome</label>
+                        <input type="text" class="form-control" name="nome_preco" id="nome_preco">
+                    </div>
+                </div>
+            </div>
 
 
 
-                <br>
+            <br>
 
 
+            <!--PRAZO DE EXECUÇÃO-->
+            <label for="data">DATA E ASSINATURA</label>
+            <input type="text" name="data" id="data" class="form-control borda" placeholder="Digite a datae e assinatura" required data-parsley-required-message="Por favor, preencha o compo">
 
 
+            <button type="submit" class="btn btn-success">
+                <i class="fas fa-check"></i> Salvar Dados
+            </button>
 
-                <button type="submit" class="btn btn-success">
-                    <i class="fas fa-check"></i> Salvar Dados
-                </button>
         </form>
     </div>
 </div>
+<!---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
-    $(document).ready(function() {
-        let contadorLinhas = 1;
+    document.addEventListener('DOMContentLoaded', function() {
+        const dropArea = document.querySelector('.drag-drop-area');
+        const fileInput = document.getElementById('file-input');
 
-        // Máscaras iniciais
-        $('.money-mask').mask('#.##0,00', {
-            reverse: true
+        // Drag and Drop
+        dropArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropArea.classList.add('dragover');
         });
+
+        dropArea.addEventListener('dragleave', () => {
+            dropArea.classList.remove('dragover');
+        });
+
+        dropArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropArea.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length) handleFile(files[0]);
+        });
+
+        // Seleção manual
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length) handleFile(e.target.files[0]);
+        });
+
+        // Processar arquivo
+        function handleFile(file) {
+    const reader = new FileReader();
+
+    reader.onload = function(e) {
+        const data = e.target.result;
+
+        // Verifica se é um arquivo CSV
+        if (file.name.endsWith('.csv')) {
+            const rows = data.split('\n').map(row => row.split(','));
+
+            // Verifica se há dados no arquivo
+            if (rows.length <= 1) {
+                alert('O arquivo está vazio ou não possui dados válidos.');
+                return;
+            }
+
+            // Converter para formato da tabela
+            const items = rows.slice(1).map(row => ({
+                item: row[0]?.trim() || '',
+                unidade: row[1]?.trim() || 'UN',
+                qtd: parseInt(row[2]?.trim()) || 1,
+                valor: parseFloat(row[3]?.trim()) || 0.00,
+                descricao: row[4]?.trim() || '',
+                obs: row[5]?.trim() || ''
+            }));
+
+            // Adicionar à tabela
+            items.forEach(item => {
+                $('#tabela-itens tbody').append(`
+                    <tr>
+                        <td>${$('#tabela-itens tbody tr').length + 1}</td>
+                        <td><input type="text" value="${item.item}" class="form-control" required></td>
+                        <td><input type="text" value="${item.unidade}" class="form-control" required></td>
+                        <td><input type="number" value="${item.qtd}" class="form-control qtd-inteiro" required></td>
+                        <td><input type="text" value="${item.valor.toFixed(2)}" class="form-control money-mask" required></td>
+                        <td class="total-item">${(item.qtd * item.valor).toFixed(2)}</td>
+                        <td><input type="text" value="${item.descricao}" class="form-control"></td>
+                        <td><input type="text" value="${item.obs}" class="form-control"></td>
+                        <td><button class="btn btn-danger btn-sm remover-linha"><i class="fas fa-trash"></i></button></td>
+                    </tr>
+                `);
+            });
+
+            // Atualizar máscaras
+            $('.money-mask').mask('000.000.000.000.000,00', { reverse: true });
+        } else {
+            // Processar arquivos XLSX
+            const workbook = XLSX.read(new Uint8Array(data), { type: 'array' });
+            const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+            const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
+
+            // Verifica se há dados no arquivo
+            if (jsonData.length <= 1) {
+                alert('O arquivo está vazio ou não possui dados válidos.');
+                return;
+            }
+
+            // Converter para formato da tabela
+            const items = jsonData.slice(1).map(row => ({
+                item: row[0] || '',
+                unidade: row[1] || 'UN',
+                qtd: parseInt(row[2]) || 1,
+                valor: parseFloat(row[3]) || 0.00,
+                descricao: row[4] || '',
+                obs: row[5] || ''
+            }));
+
+            // Adicionar à tabela
+            items.forEach(item => {
+                $('#tabela-itens tbody').append(`
+                    <tr>
+                        <td>${$('#tabela-itens tbody tr').length + 1}</td>
+                        <td><input type="text" value="${item.item}" class="form-control" required></td>
+                        <td><input type="text" value="${item.unidade}" class="form-control" required></td>
+                        <td><input type="number" value="${item.qtd}" class="form-control qtd-inteiro" required></td>
+                        <td><input type="text" value="${item.valor.toFixed(2)}" class="form-control money-mask" required></td>
+                        <td class="total-item">${(item.qtd * item.valor).toFixed(2)}</td>
+                        <td><input type="text" value="${item.descricao}" class="form-control"></td>
+                        <td><input type="text" value="${item.obs}" class="form-control"></td>
+                        <td><button class="btn btn-danger btn-sm remover-linha"><i class="fas fa-trash"></i></button></td>
+                    </tr>
+                `);
+            });
+
+            // Atualizar máscaras
+            $('.money-mask').mask('000.000.000.000.000,00', { reverse: true });
+        }
+    };
+
+    if (file.name.endsWith('.csv')) {
+        reader.readAsText(file);
+    } else {
+        reader.readAsArrayBuffer(file);
+    }
+}
+    });
+
+
+
+    $(document).ready(function() {
+        let contadorLinhas = 0
 
         // Adicionar nova linha
         $('#adicionar-linha').click(function() {
@@ -423,8 +547,10 @@ $selectOptions = require __DIR__ . '/../configs/select-options.php';
                 });
                 contadorLinhas = $('#tabela-itens tbody tr').length;
                 calcularTotal();
-            }
-        });
+            } else {
+        alert('Pelo menos um item deve ser mantido!');        
+    }
+});
 
         // Validação para aceitar apenas inteiros
         $(document).on('input', '.qtd-inteiro', function() {
@@ -523,6 +649,7 @@ $selectOptions = require __DIR__ . '/../configs/select-options.php';
             $('#fontes-container').append(novoParametro);
         });
 
+        
         // Remover parâmetro
         $(document).on('click', '.remover-parametro', function() {
             if ($('.parametro-item').length > 2) {
@@ -533,4 +660,33 @@ $selectOptions = require __DIR__ . '/../configs/select-options.php';
             }
         });
     });
+    $(document).ready(function() {
+    $('#tabela-itens').DataTable({
+        paging: true,
+        searching: false,
+        ordering: true,
+        responsive: true,
+        language: {
+            url: "js/pt-BR.json"
+        },
+        columns: [
+            null, null, null, null, null, null, null, null, null // 9 colunas
+        ],
+        dom: 'Bfrtip', // Adiciona botões para exportação
+        buttons: [
+            {
+                extend: 'csvHtml5',
+                text: 'Exportar CSV',
+                bom: true, // Garante a codificação UTF-8 com BOM
+                exportOptions: {
+                    columns: ':visible', // Exporta apenas as colunas visíveis
+                    modifier: {
+                        order: 'current', // Exporta na ordem atual
+                        page: 'all' // Exporta todas as páginas
+                    }
+                }
+            }
+        ]
+    });
+});
 </script>
