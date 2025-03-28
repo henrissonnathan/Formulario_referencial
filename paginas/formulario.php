@@ -16,33 +16,45 @@ $selectOptions = require __DIR__ . '/../configs/select-options.php';
     </div>
     <div class="card-body">
         <form name="formCadastro" method="post" action="salvar/formartar" id="formTermos" data-parsley-validate="">
+        <div class="steps-container">
+            
+
+            <div class="step active" data-step="1">
             <!-- pca -->
+             <div class="pergunta" data-toggle-target="#resposta-pca-container" data-toggle-values='["Sim"]'>
             <label for="pca">TEM PREVISÃO NO PCA?</label>
-            <select name="pca" id="pca" class="form-control borda toggle-trigger" required data-parsley-required-message="Por favor,selecione uma opisão" data-toggle-target="#resposta-pca-container" data-toggle-values='["Sim"]'>
-                <option value="">Selecione uma opção</option>
+            <div class="opcoes-grid">
                 <?php foreach ($selectOptions['pca'] as $value => $label): ?>
-                    <option value="<?= $value ?>"><?= $label ?></option>
+                    <div class="opcao_box"
+                    data-resposta="<?= $value ?>"
+                    data-toggle-target="#resposta-pca-container">
+                    <?= $label ?>
+                </div>
                 <?php endforeach; ?>
-            </select>
-            <br>
-
-            <div id="resposta-pca-container" class="toggleable-field" style="display: none;">
-                <label for="resposta-pca">Justifique:</label>
-                <input type="number" name="resposta-pca" id="resposta-pca" class="form-control borda" placeholder="Justifique">
+                <input type="hidden" name="pca" required >
             </div>
+                    <div class="erro-validacao">Por favor, selecione um oprção</div>
+        </div>
+            
 
-
-
-
-
-            <!-- orçamento(valor) -->
+            <div id="resposta-pca-container" class="pergunta-condicional" style="display: none;">
+                <label for="resposta-pca">Justifique:</label>
+                <input type="text" name="resposta-pca" id="resposta-pca" class="form-control" >
+            </div>
+            <div class="botoes-navegacao mt-4">
+                <button type="button" class="btn btn-primary proximo">Próximo</button>
+            </div>
+            </div>
+             
+        </div>
+            <!-- orçamento(valor) 
             <label for="orcamento">INFORME A DOTAÇÃO ORÇAMENTÁRIA</label>
             <input type="text" name="orcamento" id="orcamento" class="form-control borda money-mask" value="0,00" placeholder="Coloque um valor" required data-parsley-required-message="Por favor, preencha a Dotação orçamentária">
 
 
+            <!--segunda
 
-
-            <!-- Natureza da contratação-->
+            <!-- Natureza da contratação
             <label for="contrato">NATUREZA DA CONTRATAÇÃO</label>
             <select name="contrato" id="contrato" class="form-control borda toggle-trigger" required data-toggle-target="#resposta-contrato" data-toggle-values='["Outros"]'>data-parsley-required-message="Por favor, selecione uma opisão">
                 <option value="">Selecione uma opção</option>
@@ -55,7 +67,7 @@ $selectOptions = require __DIR__ . '/../configs/select-options.php';
                 <input type="text" name="resposta-contrato" id="resposta-contrato" class="form-control borda" placeholder="INFORME:">
             </div>
 
-
+                    <!--etapa 3
             <div class="mb-4">
                 <div class="file-upload-container border p-3 rounded bg-light">
                     <label class="form-label">Importar Tabela:</label>
@@ -69,7 +81,7 @@ $selectOptions = require __DIR__ . '/../configs/select-options.php';
             <br>
             <h5 class="mt-4">Itens</h5>
 
-            <!-- tabela-->
+            <!-- tabela
             <table id="tabela-itens" class="table table-bordered">
                 <thead>
                     <tr>
@@ -104,8 +116,8 @@ $selectOptions = require __DIR__ . '/../configs/select-options.php';
 
                 </div>
             </div>
-
-            <!-- Modalidade-->
+                    <!--etapa 4
+            <!-- Modalidade
             <label for="modalidade">MODALIDADE</label>
             <select name="modalidade" id="modalidade" class="form-control borda  toggle-trigger" required data-parsley-required-message="Por favor, selecione uma opisão" data-toggle-target="#modal" data-toggle-values='["Licitação","Inexigibilidade e licitação","Chamamento público",""]'>
                 <option value="">Selecione uma opção</option>
@@ -115,7 +127,9 @@ $selectOptions = require __DIR__ . '/../configs/select-options.php';
             </select>
 
 
-            <!--Critério-->
+
+                    <!--etapa 5
+            <!--Critério
             <div id="modal" class="toggleable-field" style="display: none;">
                 <label for="criterio">CRITÉRIO DE ADJUDICAÇÃO DO OBJETO</label>
                 <select name="criterio" id="criterio" class="form-control borda" required data-parsley-required-message="Por favor, selecione uma opisão">
@@ -126,8 +140,8 @@ $selectOptions = require __DIR__ . '/../configs/select-options.php';
                 </select>
             </div>
 
-
-            <!--trata de licitações,etc.-->
+                            <!--etapa 6
+            <!--trata de licitações,etc.
             <label for="trata">TRATA-SE DE LICITAÇÕES DECORRENTE DE CONVÊNIO/CONTRATO DE REPASSE/OUTROS COM GOVERNO ESTADUAL/FEDERAL?</label>
             <select name="trata" id="trata" class="form-control borda" required data-parsley-required-message="Por favor, selecione uma opisão">
                 <option value="">Selecione uma opção</option>
@@ -135,7 +149,9 @@ $selectOptions = require __DIR__ . '/../configs/select-options.php';
                     <option value="<?= $value ?>"><?= $label ?></option>
                 <?php endforeach; ?>
             </select>
-            <!--definisão de quantidade-->
+
+                    <!--etapa 7  
+            <!--definisão de quantidade
             <label for="levantamento">COMO FORAM DEFINIDAS AS QUANTIDADES</label>
             <select name="levantamento" id="levantamento" class="form-control borda toggle-trigger" required data-parsley-required-message="Por favor, selecione uma opisão" data-toggle-target="#leve" data-toggle-values='["Outros"]'>
                 <option value="">Selecione uma opção</option>
@@ -151,8 +167,8 @@ $selectOptions = require __DIR__ . '/../configs/select-options.php';
 
 
 
-
-            <!--definisão de quantidade-->
+                    <!--etapa 8
+            <!--definisão de quantidade
             <label for="parametro">PARÂMETRO UTILIZADO PARA OBTENÇÃO DO VALOR DE REFERÊNCIA:</label>
             <select name="parametro" id="parametro" class="form-control borda" required data-parsley-required-message="Por favor, selecione uma opisão">
                 <option value="">Selecione uma opção</option>
@@ -160,12 +176,12 @@ $selectOptions = require __DIR__ . '/../configs/select-options.php';
                     <option value="<?= $value ?>"><?= $label ?></option>
                 <?php endforeach; ?>
             </select>
-
-            <!--PARÂMETRO UTILIZADO PARA OBTENÇÃO DO VALOR DE REFERÊNCIA-->
+                        <!--etapa 9
+            <!--PARÂMETRO UTILIZADO PARA OBTENÇÃO DO VALOR DE REFERÊNCIA
             <label>FONTES DE PESQUISA </label>
-            <!-- Container dos parâmetros -->
+            <!-- Container dos parâmetros 
             <div id="fontes-container">
-                <!-- Linha 1 -->
+                <!-- Linha 1 
                 <div class="input-group mb-2 fonte-item">
                     <select name="fonte[]" class="form-control borda toggle-trigger" required
                         data-parsley-required-message="Por favor, selecione uma opção">
@@ -179,7 +195,7 @@ $selectOptions = require __DIR__ . '/../configs/select-options.php';
                     </button>
                 </div>
 
-                <!-- Linha 2 (mínimo obrigatório) -->
+                <!-- Linha 2 (mínimo obrigatório) 
                 <div class="input-group mb-2 fonte-item">
                     <select name="fonte[]" class="form-control borda" required
                         data-parsley-required-message="Por favor, selecione uma opção">
@@ -194,13 +210,13 @@ $selectOptions = require __DIR__ . '/../configs/select-options.php';
                 </div>
             </div>
 
-            <!-- Botão para adicionar mais linhas -->
+            <!-- Botão para adicionar mais linhas 
             <button type="button" id="adicionar-fonte" class="btn btn-primary btn-sm mt-2">
                 <i class="fas fa-plus"></i> Adicionar Parâmetro
             </button>
 
-
-            <!--Orçamento fas fa-ca-->
+                            <!--etapa 10
+            <!--Orçamento fas fa-ca
             <label for="orcamento">FOI OBTIDO ORÇAMENTO COM, NO MÍNIMO, 03 FORNECEDORES ENQUADRADOS COMO MPE LOCAL OU REGIONAL OU, DE OUTRA FORMA, HÁ COMPROVAÇÃO DE QUE HÁ 03 FORNECEDORES MPE LOCAL OU REGIONAL?</label>
             <select name="orcamento" id="orcamento" class="form-control borda" required data-parsley-required-message="Por favor, selecione uma opisão">
                 <option value="">Selecione uma opção</option>
@@ -208,8 +224,8 @@ $selectOptions = require __DIR__ . '/../configs/select-options.php';
                     <option value="<?= $value ?>"><?= $label ?></option>
                 <?php endforeach; ?>
             </select>
-
-            <!--retrisão territorial -->
+                   <!--etapa11
+            <!--retrisão territorial 
             <label for="retricao">VAI SER APLICADA RESTRIÇÃO TERRITORIAL?</label>
             <select name="retricao" id="retricao" class="form-control borda toggle-trigger" required data-parsley-required-message="Por favor, selecione uma opisão" data-toggle-target="#terri" data-toggle-values='["sim. Restrição regional","sim. Restrição local","Outros"]'>
                 <option value="">Selecione uma opção</option>
@@ -224,9 +240,9 @@ $selectOptions = require __DIR__ . '/../configs/select-options.php';
 
 
 
+                <!--etapa 12
 
-
-            <!--CARACTERÍSTICA DO CERTAME-->
+            <!--CARACTERÍSTICA DO CERTAME
             <label for="certame">CARACTERÍSTICA DO CERTAME:</label>
             <select name="certame" id="certame" class="form-control borda" required data-parsley-required-message="Por favor, selecione uma opisão">
                 <option value="">Selecione uma opção</option>
@@ -235,8 +251,8 @@ $selectOptions = require __DIR__ . '/../configs/select-options.php';
                 <?php endforeach; ?>
             </select>
 
-
-            <!--FORMA DE SELEÇÃO*-->
+                        <!--etapa 13
+            <!--FORMA DE SELEÇÃO*
             <label for="selecao">FORMA DE SELEÇÃO:</label>
             <select name="selecao" id="selecao" class="form-control borda toggle-trigger" required data-parsley-required-message="Por favor, selecione uma opisão" data-toggle-target="#selecasta" data-toggle-values='["Presencial","Sem disputas"]'>
                 <option value="">Selecione uma opção</option>
@@ -251,8 +267,8 @@ $selectOptions = require __DIR__ . '/../configs/select-options.php';
 
 
 
-
-            <!--ANALISE DE CONFORMIDADE DA PROPOSTA*-->
+                        <!--etapa 14
+            <!--ANALISE DE CONFORMIDADE DA PROPOSTA*
             <label for="proposta">ANALISE DE CONFORMIDADE DA PROPOSTA:</label>
             <select name="proposta" id="proposta" class="form-control borda toggle-trigger" required data-parsley-required-message="Por favor, selecione uma opisão" data-toggle-target="#propostaas" data-toggle-values='["Amostra","Exame de conformidade","Prova de conceito"]'>
                 <option value="">Selecione uma opção</option>
@@ -265,26 +281,32 @@ $selectOptions = require __DIR__ . '/../configs/select-options.php';
                 <input type="text" name="propos-expli" id="propos-expli" class="form-control borda" placeholder="justifique">
             </div>
 
-
-            <!--justificativa-->
+                    <!--etapa 15
+            <!--justificativa
             <label for="justificativa">JUSTIFICATIVA DA CONTRATAÇÃO:</label>
             <input type="text" name="justificativa" id="justificativa" class="form-control borda" placeholder="Digite a justificativa" required data-parsley-required-message="Por favor, preencha o justificativa">
-            <!--condiçoes específicas do objeto-->
+            
+                    <!--etapa 16
+            <!--condiçoes específicas do objeto
             <label for="condicoes">CONDIÇÕES ESPECÍFICAS DO OBJETO (detalhamento completo do objeto)</label>
             <input type="text" name="condicoes" id="condicoes" class="form-control borda" placeholder="Digite a condicoes" required data-parsley-required-message="Por favor, preencha o condicoes">
-            <!--prazo de vigência do(a) sistema registro de preços-->
+            
+                    <!--etapa 17
+            <!--prazo de vigência do(a) sistema registro de preços
             <label for="prazo">PRAZO DE VIGÊNCIA DO(A) SISTEMA REGISTRO DE PREÇOS (ATA REGISTRO DE PREÇOS)</label>
             <input type="text" name="prazo" id="prazo" class="form-control borda" placeholder="Digite a prazo" required data-parsley-required-message="Por favor, preencha o prazo">
-            <!--PRAZO DE EXECUÇÃO-->
+            <!-- etapa 18
+            <!--PRAZO DE EXECUÇÃO
             <label for="execucao">DETALHE COMO DEVE SER O PRAZO DE EXECUÇÃO - PRAZO MÁXIMO PARA INICIAR E PRAZO PARA CONCLUSÃO</label>
             <input type="text" name="execucao" id="execucao" class="form-control borda" placeholder="Digite a execucao" required data-parsley-required-message="Por favor, preencha o execucao">
-            <!--LOCAL DE EXECUÇÃO-->
+            <!-- etapa 19
+            <!--LOCAL DE EXECUÇÃO
             <label for="local">LOCAL DE EXECUÇÃO</label>
             <input type="text" name="local" id="local" class="form-control borda" placeholder="Digite a local" required data-parsley-required-message="Por favor, preencha o local">
 
 
-
-            <!-- UNIDADE REQUISITANTE -->
+                        <!--etapa 20
+            <!-- UNIDADE REQUISITANTE 
             <div class="mb-3">
                 <label for="proposta" class="form-label">UNIDADE REQUISITANTE</label>
                 <select name="proposta" id="proposta" class="form-control borda" required data-parsley-required-message="Por favor, selecione uma opção">
@@ -295,7 +317,7 @@ $selectOptions = require __DIR__ . '/../configs/select-options.php';
                 </select>
             </div>
 
-            <!-- RESPONSÁVEL PELO ETP -->
+            <!-- RESPONSÁVEL PELO ETP 
             <div class="mb-3">
                 <label class="form-label">RESPONSÁVEL PELO ETP</label>
                 <div class="row">
@@ -310,7 +332,7 @@ $selectOptions = require __DIR__ . '/../configs/select-options.php';
                 </div>
             </div>
 
-            <!-- RESPONSÁVEL PELO DFD -->
+            <!-- RESPONSÁVEL PELO DFD 
             <div class="mb-3">
                 <label class="form-label">RESPONSÁVEL PELO DFD</label>
                 <div class="row">
@@ -325,7 +347,7 @@ $selectOptions = require __DIR__ . '/../configs/select-options.php';
                 </div>
             </div>
 
-            <!-- RESPONSÁVEL PELO LEVANTAMENTO DE PREÇO -->
+            <!-- RESPONSÁVEL PELO LEVANTAMENTO DE PREÇO 
             <div class="mb-3">
                 <label class="form-label">RESPONSÁVEL PELO LEVANTAMENTO DE PREÇO</label>
                 <div class="row">
@@ -343,17 +365,20 @@ $selectOptions = require __DIR__ . '/../configs/select-options.php';
 
 
             <br>
-
-
-            <!--PRAZO DE EXECUÇÃO-->
+                    
+                    <!--  etapa 21
+            <!--PRAZO DE EXECUÇÃO
+            
             <label for="data">DATA E ASSINATURA</label>
             <input type="text" name="data" id="data" class="form-control borda" placeholder="Digite a datae e assinatura" required data-parsley-required-message="Por favor, preencha o compo">
 
-
+                    -->
             <button type="submit" class="btn btn-success">
                 <i class="fas fa-check"></i> Salvar Dados
             </button>
-
+        
+        
+        </div>
         </form>
     </div>
 </div>
@@ -660,4 +685,65 @@ $(document).ready(function() {
     // Inicializar máscaras
     $('.money-mask').mask('#.##0,00', {reverse: true});
 });
+$(document).ready(function() {
+    let currentStep = 1;
+    const totalSteps = $('.step').length;
+
+    // Navegação para frente
+    $('.proximo').click(function() {
+        if(validarPasso(currentStep)) {
+            mudarPasso(currentStep + 1);
+        }
+    });
+
+    // Navegação para trás
+    $('.anterior').click(function() {
+        mudarPasso(currentStep - 1);
+    });
+
+    function mudarPasso(novoPasso) {
+        // Esconder etapa atual
+        $(`.step[data-step="${currentStep}"]`).removeClass('active');
+        
+        // Mostrar nova etapa
+        currentStep = novoPasso;
+        $(`.step[data-step="${currentStep}"]`).addClass('active');
+    }
+
+    function validarPasso(passo) {
+        let valido = true;
+        
+        // Verificar todos os campos obrigatórios
+        $(`.step[data-step="${passo}"] [required]`).each(function() {
+            if(!$(this).val()) {
+                $(this).closest('.pergunta').find('.erro-validacao').show();
+                valido = false;
+            }
+        });
+        
+        return valido;
+    }
+
+    // Controle de opções selecionadas
+    $('.opcao-box').click(function() {
+        // Remover seleção anterior
+        $(this).siblings('.opcao-box').removeClass('selecionada');
+        
+        // Marcar seleção atual
+        $(this).addClass('selecionada');
+        
+        // Atualizar valor do input
+        const valor = $(this).data('resposta');
+        $(this).siblings('input').val(valor);
+        
+        // Mostrar/ocultar campos condicionais
+        const target = $(this).data('toggle-target');
+        if(target) {
+            const deveMostrar = $(this).data('toggle-values').includes(valor);
+            $(target).toggle(deveMostrar);
+        }
+    });
+});
+
+
 </script>

@@ -36,16 +36,8 @@
   /* Cor Roxa para os links da navegação */
 }
 
-.navbar-nav .nav-link:hover {
-  color: #006400 !important;
-  /* Cor Verde Escuro quando hover */
-}
 
-.card {
-  border-radius: 5;
 
-  box-shadow: 0 0 15px #8a2be2 !important;
-}
 
 .btn {
   border-radius: 0;
@@ -87,12 +79,7 @@ select.form-control option:checked {
   padding: 5px;
 }
 
-.container {
-  border: 1px solid #8a2be2;
-  border-radius: 10px;
-  padding: 20px;
-  box-shadow: 1px 1px 10px #7c1ed3;
-}
+
 
 label {
   color: #e28a2b !important;
@@ -155,4 +142,66 @@ input{
 
 .file-upload-container {
   max-width: 500px;
+}
+.steps-container {
+  position: relative;
+  min-height: 500px;
+}
+
+.step {
+  display: none;
+  opacity: 0;
+  transition: all 0.3s ease;
+  position: absolute;
+  width: 100%;
+}
+
+.step.active {
+  display: block;
+  opacity: 1;
+  position: relative;
+}
+
+.opcoes-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+  margin: 20px 0;
+}
+
+.opcao-box {
+  padding: 20px;
+  border: 2px solid #8a2be2;
+  border-radius: 10px;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.opcao-box:hover {
+  background-color: #f0e6ff;
+}
+
+.opcao-box.selecionada {
+  background-color: #8a2be2;
+  color: white;
+}
+
+.pergunta-condicional {
+  margin-top: 20px;
+  padding: 15px;
+  border-left: 4px solid #8a2be2;
+  background-color: #f8f9fa;
+}
+
+.botoes-navegacao {
+  margin-top: 30px;
+  display: flex;
+  gap: 10px;
+}
+
+.erro-validacao {
+  color: #dc3545;
+  display: none;
+  margin-top: 10px;
 }
