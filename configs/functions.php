@@ -13,7 +13,26 @@
 		";
 		exit;
 	}
-    
+	
+    function validarRespostas($dados) {
+		// Validação geral
+		$camposObrigatorios = [
+			'pca', 
+			'contrato',
+			//... adicione outros campos obrigatórios
+		];
+	
+		foreach($camposObrigatorios as $campo) {
+			if(empty($dados[$campo])) {
+				mensagem('Erro', "O campo {$campo} é obrigatório");
+			}
+		}
+	
+		// Validação condicional específica
+		if($dados['pca'] === 'Sim' && empty($dados['resposta-pca'])) {
+			mensagem('Erro', 'A justificativa do PCA é obrigatória quando a resposta é Sim');
+		}
+	}
 
     /* ***********************************
 	* loadImg($imagem, $nome)

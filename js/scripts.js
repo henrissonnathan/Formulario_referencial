@@ -3,7 +3,7 @@
     * Copyright 2013-2021 Start Bootstrap
     * Licensed under MIT (https://github.com/StartBootstrap/startbootstrap-sb-admin/blob/master/LICENSE)
     */
-    // 
+// 
 // Scripts
 // 
 
@@ -28,17 +28,61 @@ window.addEventListener('DOMContentLoaded', event => {
 function calcularTotal(quantidade) {
     let valor = document.querySelector("#valor").value;
 
-    if ( quantidade <= 0) {
+    if (quantidade <= 0) {
         Swal.fire({
             title: 'Erro',
             text: 'Digite um valor positivo',
         })
         $("#quantidade").val("");
     }
-    else if ( valor != "" ) {
+    else if (valor != "") {
         valor = Number(valor.replace(/\D/g, '')) / 100;
         let total = quantidade * valor;
-        total = total.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
+        total = total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
         document.querySelector("#total").value = total;
     }
 }
+
+$(document).ready(function () {
+    let currentStep = 1;
+
+    $('.proximo').click(function () {
+        if (validarPasso(currentStep)) {
+            mudarPasso(currentStep + 1);
+        }
+    });
+
+    $('.anterior').click(function () {
+        mudarPasso(currentStep - 1);
+    });
+
+    $('.opcao-box').click(function () {
+        $(this).siblings().removeClass('selecionada');
+        $(this).addClass('selecionada');
+        const valor = $(this).data('resposta');
+        $(this).siblings('input').val(valor);
+
+        const target = $(this).closest('.pergunta').data('toggle-target');
+        if (target) {
+            const deveMostrar = $(this).data('toggle-values').includes(valor);
+            $(target).toggle(deveMostrar);
+        }
+    });
+
+    function mudarPasso(novoPasso) {
+        $(`.step[data-step="${currentStep}"]`).removeClass('active');
+        currentStep = novoPasso;
+        $(`.step[data-step="${currentStep}"]`).addClass('active');
+    }
+
+    function validarPasso(passo) {
+        let valido = true;
+        $(`.step[data-step="${passo}"] [required]`).each(function () {
+            if (!$(this).val()) {
+                $(this).closest('.pergunta').find('.erro-validacao').show();
+                valido = false;
+            }
+        });
+        return valido;
+    }
+});
