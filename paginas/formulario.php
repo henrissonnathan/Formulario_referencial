@@ -1,7 +1,6 @@
 <?php
 if (!isset($pagina)) {
     exit;
-    
 }
 ?>
 <?php
@@ -16,7 +15,7 @@ $selectOptions = require __DIR__ . '/../configs/select-options.php';
         </div>
     </div>
     <div class="card-body">
-        <form name="formCadastro" method="post" action="salvar/salvarC" data-parsley-validate="">
+        <form name="formCadastro" method="post" action="salvar/formartar" id="formTermos" data-parsley-validate="">
             <!-- pca -->
             <label for="pca">TEM PREVISÃO NO PCA?</label>
             <select name="pca" id="pca" class="form-control borda toggle-trigger" required data-parsley-required-message="Por favor,selecione uma opisão" data-toggle-target="#resposta-pca-container" data-toggle-values='["Sim"]'>
@@ -72,32 +71,19 @@ $selectOptions = require __DIR__ . '/../configs/select-options.php';
 
             <!-- tabela-->
             <table id="tabela-itens" class="table table-bordered">
-            <thead class="table-color">
-                <tr>
-            <th>ID</th>
-            <th>Item</th>
-            <th>Unid.</th>
-            <th>Qtd.</th>
-            <th>Valor Unit</th>
-            <th>Total Item</th>
-            <th>Descrição</th>
-            <th>Obs.</th>
-            <th>Ações</th>
-                </tr>
-            </thead>
-                <tbody>
-                    <!--Linha inicial  esta assim par no import não ter uma linha amis
+                <thead>
                     <tr>
-                <td>1</td>
-                <td><input type="text" name="item[]" class="form-control" required></td>
-                <td><input type="text" name="unid[]" class="form-control unidade" value="UN" required></td>
-                <td><input type="number" name="qtd[]" class="form-control qtd-inteiro" min="1" value="1" required></td>
-                <td><input type="text" name="valor_unitario[]" class="form-control money-mask" required></td>
-                <td class="total-item">0,00</td>
-                <td><input type="text" name="descricao[]" class="form-control"></td>
-                <td><input type="text" name="obs[]" class="form-control"></td>
-                <td><button type="button" class="btn btn-danger btn-sm remover-linha"><i class="fas fa-trash"></i></button></td>
-                    </tr>-->
+                        <th>ID</th>
+                        <th>Item</th>
+                        <th>Unid.</th>
+                        <th>Qtd.</th>
+                        <th>Valor Unit</th>
+                        <th>Descrição</th>
+                        <th>Obs.</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
                 </tbody>
             </table>
 
@@ -371,322 +357,307 @@ $selectOptions = require __DIR__ . '/../configs/select-options.php';
         </form>
     </div>
 </div>
-<!---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.2.2/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.html5.min.js"></script>
+
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const dropArea = document.querySelector('.drag-drop-area');
-        const fileInput = document.getElementById('file-input');
-
-        // Drag and Drop
-        dropArea.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            dropArea.classList.add('dragover');
-        });
-
-        dropArea.addEventListener('dragleave', () => {
-            dropArea.classList.remove('dragover');
-        });
-
-        dropArea.addEventListener('drop', (e) => {
-            e.preventDefault();
-            dropArea.classList.remove('dragover');
-            const files = e.dataTransfer.files;
-            if (files.length) handleFile(files[0]);
-        });
-
-        // Seleção manual
-        fileInput.addEventListener('change', (e) => {
-            if (e.target.files.length) handleFile(e.target.files[0]);
-        });
-
-        // Processar arquivo
-        function handleFile(file) {
-    const reader = new FileReader();
-
-    reader.onload = function(e) {
-        const data = e.target.result;
-
-        // Verifica se é um arquivo CSV
-        if (file.name.endsWith('.csv')) {
-            const rows = data.split('\n').map(row => row.split(','));
-
-            // Verifica se há dados no arquivo
-            if (rows.length <= 1) {
-                alert('O arquivo está vazio ou não possui dados válidos.');
-                return;
-            }
-
-            // Converter para formato da tabela
-            const items = rows.slice(1).map(row => ({
-                item: row[0]?.trim() || '',
-                unidade: row[1]?.trim() || 'UN',
-                qtd: parseInt(row[2]?.trim()) || 1,
-                valor: parseFloat(row[3]?.trim()) || 0.00,
-                descricao: row[4]?.trim() || '',
-                obs: row[5]?.trim() || ''
-            }));
-
-            // Adicionar à tabela
-            items.forEach(item => {
-                $('#tabela-itens tbody').append(`
-                    <tr>
-                        <td>${$('#tabela-itens tbody tr').length + 1}</td>
-                        <td><input type="text" value="${item.item}" class="form-control" required></td>
-                        <td><input type="text" value="${item.unidade}" class="form-control" required></td>
-                        <td><input type="number" value="${item.qtd}" class="form-control qtd-inteiro" required></td>
-                        <td><input type="text" value="${item.valor.toFixed(2)}" class="form-control money-mask" required></td>
-                        <td class="total-item">${(item.qtd * item.valor).toFixed(2)}</td>
-                        <td><input type="text" value="${item.descricao}" class="form-control"></td>
-                        <td><input type="text" value="${item.obs}" class="form-control"></td>
-                        <td><button class="btn btn-danger btn-sm remover-linha"><i class="fas fa-trash"></i></button></td>
-                    </tr>
-                `);
-            });
-
-            // Atualizar máscaras
-            $('.money-mask').mask('000.000.000.000.000,00', { reverse: true });
-        } else {
-            // Processar arquivos XLSX
-            const workbook = XLSX.read(new Uint8Array(data), { type: 'array' });
-            const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-            const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
-
-            // Verifica se há dados no arquivo
-            if (jsonData.length <= 1) {
-                alert('O arquivo está vazio ou não possui dados válidos.');
-                return;
-            }
-
-            // Converter para formato da tabela
-            const items = jsonData.slice(1).map(row => ({
-                item: row[0] || '',
-                unidade: row[1] || 'UN',
-                qtd: parseInt(row[2]) || 1,
-                valor: parseFloat(row[3]) || 0.00,
-                descricao: row[4] || '',
-                obs: row[5] || ''
-            }));
-
-            // Adicionar à tabela
-            items.forEach(item => {
-                $('#tabela-itens tbody').append(`
-                    <tr>
-                        <td>${$('#tabela-itens tbody tr').length + 1}</td>
-                        <td><input type="text" value="${item.item}" class="form-control" required></td>
-                        <td><input type="text" value="${item.unidade}" class="form-control" required></td>
-                        <td><input type="number" value="${item.qtd}" class="form-control qtd-inteiro" required></td>
-                        <td><input type="text" value="${item.valor.toFixed(2)}" class="form-control money-mask" required></td>
-                        <td class="total-item">${(item.qtd * item.valor).toFixed(2)}</td>
-                        <td><input type="text" value="${item.descricao}" class="form-control"></td>
-                        <td><input type="text" value="${item.obs}" class="form-control"></td>
-                        <td><button class="btn btn-danger btn-sm remover-linha"><i class="fas fa-trash"></i></button></td>
-                    </tr>
-                `);
-            });
-
-            // Atualizar máscaras
-            $('.money-mask').mask('000.000.000.000.000,00', { reverse: true });
-        }
-    };
-
-    if (file.name.endsWith('.csv')) {
-        reader.readAsText(file);
-    } else {
-        reader.readAsArrayBuffer(file);
-    }
-}
-    });
-
-
-
-    $(document).ready(function() {
-        let contadorLinhas = 0
-
-        // Adicionar nova linha
-        $('#adicionar-linha').click(function() {
-            contadorLinhas++;
-            const novaLinha = `
-        <tr>
-            <td>${contadorLinhas}</td>
-            <td><input type="text" name="item[]" class="form-control" required></td>
-            <td><input type="text" name="unid[]" class="form-control unidade" value="UN" required></td>
-            <td><input type="number" name="qtd[]" class="form-control qtd-inteiro" min="1" value="1" required></td>
-            <td><input type="text" name="valor_unitario[]" class="form-control money-mask" required></td>
-            <td class="total-item">0,00</td>
-            <td><input type="text" name="descricao[]" class="form-control"></td>
-            <td><input type="text" name="obs[]" class="form-control"></td>
-            <td><button type="button" class="btn btn-danger btn-sm remover-linha"><i class="fas fa-trash"></i></button></td>
-        </tr>`;
-            $('#tabela-itens tbody').append(novaLinha);
-
-            // Aplica máscaras aos novos campos
-            $('.money-mask').mask('#.##0,00', {
-                reverse: true
-            });
-        });
-
-        // Remover última linha
-        $('#remover-linha').click(function() {
-            if ($('#tabela-itens tbody tr').length > 1) {
-                $('#tabela-itens tbody tr:last').remove();
-                contadorLinhas--;
-                calcularTotal();
-            } else {
-                alert('Pelo menos um item deve ser mantido!');
-            }
-        });
-
-        // Remover linha específica
-        $(document).on('click', '.remover-linha', function() {
-            if ($('#tabela-itens tbody tr').length > 1) {
-                $(this).closest('tr').remove();
-                // Atualiza IDs
-                $('#tabela-itens tbody tr').each(function(index) {
-                    $(this).find('td:first').text(index + 1);
-                });
-                contadorLinhas = $('#tabela-itens tbody tr').length;
-                calcularTotal();
-            } else {
-        alert('Pelo menos um item deve ser mantido!');        
-    }
-});
-
-        // Validação para aceitar apenas inteiros
-        $(document).on('input', '.qtd-inteiro', function() {
-            this.value = this.value.replace(/[^0-9]/g, '');
-            if (this.value < 1) this.value = 1;
-            calcularItem($(this).closest('tr'));
-        });
-
-        // Máscara para orçamento
-        $('#orcamento').mask('#.##0,00', {
-            reverse: true
-        });
-
-        // Mostrar/ocultar resposta
-        $(document).ready(function() {
-            $(document).on('change', '.toggle-trigger', function() {
-                const target = $(this).data('toggle-target');
-                const triggerValues = $(this).data('toggle-values') || [];
-                const noClearValues = $(this).data('no-clear-values') || [];
-                const currentValue = $(this).val();
-
-                const shouldShow = triggerValues.includes(currentValue);
-                $(target).toggle(shouldShow);
-
-                // Atualiza obrigatoriedade do campo condicional
-                const $conditionalField = $(target).find('select, input');
-                $conditionalField.prop('required', shouldShow);
-
-                // Limpa apenas se não estiver em noClearValues
-                if (!shouldShow && !noClearValues.includes(currentValue)) {
-                    $conditionalField.val('');
-                }
-            });
-        });
-        // Função para calcular total por item
-        function calcularItem(linha) {
-            const qtd = parseInt(linha.find('.qtd-inteiro').val()) || 0;
-            const valorUnitario = parseFloat(
-                linha.find('.money-mask').val().replace(/\./g, '').replace(',', '.')
-            ) || 0;
-
-            const totalItem = qtd * valorUnitario;
-            linha.find('.total-item').text(totalItem.toLocaleString('pt-BR', {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
-            }));
-
-            return totalItem;
-        }
-
-        // Função para calcular o total geral
-        function calcularTotal() {
-            let totalGeral = 0;
-
-            $('#tabela-itens tbody tr').each(function() {
-                totalGeral += calcularItem($(this));
-            });
-
-            // Formata o total geral
-            $('#total-geral').text(totalGeral.toLocaleString('pt-BR', {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
-            }));
-        }
-
-        // Calcular ao modificar valores
-        $(document).on('input', '.money-mask, .qtd-inteiro', function() {
-            calcularItem($(this).closest('tr'));
-            calcularTotal();
-        });
-
-        // Botão calcular
-        $('#calcular-total').click(calcularTotal);
-    });
-    $(document).ready(function() {
-        // Contador de parâmetros
-        let contadorfontes = 2;
-
-        // Adicionar novo parâmetro
-        $('#adicionar-parametro').click(function() {
-            contadorfontes++;
-            const novoParametro = `
-        <div class="input-group mb-2 parametro-item">
-            <select name="parametro[]" class="form-control borda" required
-                    data-parsley-required-message="Por favor, selecione uma opção">
-                <option value="">Selecione uma opção</option>
-                <?php foreach ($selectOptions['parametro'] as $value => $label): ?>
-                    <option value="<?= $value ?>"><?= $label ?></option>
-                <?php endforeach; ?>
-            </select>
-            <button type="button" class="btn btn-danger remover-parametro">
-                <i class="fas fa-minus"></i>
-            </button>
-        </div>`;
-
-            $('#fontes-container').append(novoParametro);
-        });
-
-        
-        // Remover parâmetro
-        $(document).on('click', '.remover-parametro', function() {
-            if ($('.parametro-item').length > 2) {
-                $(this).closest('.parametro-item').remove();
-                contadorfontes--;
-            } else {
-                alert('É necessário manter pelo menos 2 parâmetros!');
-            }
-        });
-    });
-    $(document).ready(function() {
-    $('#tabela-itens').DataTable({
+$(document).ready(function() {
+    // Inicializar DataTables com paginação
+    const tabelaItens = $('#tabela-itens').DataTable({
         paging: true,
+        pageLength: 10, // 10 itens por página
+        lengthMenu: [[5, 10, 20, 50, -1], [5, 10, 20, 50, "Todos"]],
         searching: false,
         ordering: true,
         responsive: true,
-        language: {
-            url: "js/pt-BR.json"
-        },
-        columns: [
-            null, null, null, null, null, null, null, null, null // 9 colunas
-        ],
-        dom: 'Bfrtip', // Adiciona botões para exportação
+        dom: 'Blfrtip',
         buttons: [
             {
-                extend: 'csvHtml5',
+                extend: 'csv',
                 text: 'Exportar CSV',
-                bom: true, // Garante a codificação UTF-8 com BOM
+                className: 'btn btn-primary btn-sm',
                 exportOptions: {
-                    columns: ':visible', // Exporta apenas as colunas visíveis
-                    modifier: {
-                        order: 'current', // Exporta na ordem atual
-                        page: 'all' // Exporta todas as páginas
-                    }
+                    columns: ':visible'
                 }
             }
+        ],
+        language: {
+            url: "//cdn.datatables.net/plug-ins/1.11.5/i18n/pt-BR.json",
+            emptyTable: "Nenhum item cadastrado - adicione linhas ou importe dados",
+            info: "Mostrando _START_ a _END_ de _TOTAL_ itens",
+            infoEmpty: "Mostrando 0 itens",
+            infoFiltered: "(filtrado de _MAX_ itens no total)",
+            lengthMenu: "Mostrar _MENU_ itens por página",
+            loadingRecords: "Carregando...",
+            processing: "Processando...",
+            search: "Pesquisar:",
+            zeroRecords: "Nenhum item encontrado",
+            paginate: {
+                first: "Primeira",
+                last: "Última",
+                next: "Próxima",
+                previous: "Anterior"
+            }
+        },
+        columnDefs: [
+            
+            {targets: '_all', // Aplica a todas as colunas
+                searchable: false // Desativa a pesquisa
+                }
+            
         ]
     });
+
+    // Adicionar nova linha
+    $('#adicionar-linha').click(function() {
+        const novaLinha = [
+            tabelaIten.rows().count() + 1,
+            `<input type="text" name="item[]" class="form-control" required>`,
+            `<input type="text" name="unid[]" class="form-control unidade" value="UN" required>`,
+            `<input type="number" name="qtd[]" class="form-control qtd-inteiro" min="1" value="1" required>`,
+            `<input type="text" name="valor_unitario[]" class="form-control money-mask" required>`,
+            `<input type="text" name="descricao[]" class="form-control">`,
+            `<input type="text" name="obs[]" class="form-control">`,
+            `<button type="button" class="btn btn-danger btn-sm remover-linha"><i class="fas fa-trash"></i></button>`
+        ];
+        
+        tabelaItens.row.add(novaLinha).draw();
+        
+        // Aplica máscaras aos novos campos
+        $('.money-mask').mask('#.##0,00', {reverse: true});
+    });
+
+    // Remover última linha
+    $('#remover-linha').click(function() {
+        if (tabelaItens.rows().count() > 0) {
+            tabelaItens.row(':last').remove().draw();
+        } else {
+            alert('Não há linhas para remover!');
+        }
+    });
+
+    // Remover linha específica
+    $('#tabela-itens tbody').on('click', '.remover-linha', function() {
+        tabelaItens.row($(this).parents('tr')).remove().draw();
+    });
+
+    // Configuração do drag and drop
+    const dropArea = document.querySelector('.drag-drop-area');
+    const fileInput = document.getElementById('file-input');
+
+    // Função para processar arquivo
+    function handleFile(file) {
+        const reader = new FileReader();
+        
+        reader.onload = function(e) {
+            const data = e.target.result;
+            
+            if (file.name.endsWith('.csv')) {
+                processCSV(data);
+            } else {
+                processExcel(data);
+            }
+        };
+        
+        reader.onerror = function() {
+            alert('Erro ao ler o arquivo. Por favor, tente novamente.');
+        };
+        
+        if (file.name.endsWith('.csv')) {
+            reader.readAsText(file);
+        } else {
+            reader.readAsArrayBuffer(file);
+        }
+    }
+
+    // Processar CSV
+    function processCSV(data) {
+        try {
+            const rows = data.split('\n').filter(row => row.trim() !== '');
+            if (rows.length <= 1) {
+                alert('O arquivo CSV está vazio ou não possui dados válidos.');
+                return;
+            }
+            
+            // Obter cabeçalhos (se houver)
+            const headers = rows[0].split(',').map(h => h.trim());
+            
+            // Processar linhas de dados
+            for (let i = 1; i < rows.length; i++) {
+                const rowData = rows[i].split(',');
+                
+                // Verificar se a linha tem dados suficientes
+                if (rowData.length >= 4) {
+                    const item = {
+                        nome: rowData[0]?.trim() || '',
+                        unidade: rowData[1]?.trim() || 'UN',
+                        quantidade: parseInt(rowData[2]?.trim()) || 1,
+                        valor: parseFloat(rowData[3]?.trim().replace('.', '').replace(',', '.')) || 0,
+                        descricao: rowData[4]?.trim() || '',
+                        obs: rowData[5]?.trim() || ''
+                    };
+                    
+                    // Adicionar à tabela
+                    tabelaItens.row.add([
+                        tabelaItens.rows().count() + 1,
+                        `<input type="text" value="${item.nome}" class="form-control" required>`,
+                        `<input type="text" value="${item.unidade}" class="form-control" required>`,
+                        `<input type="number" value="${item.quantidade}" class="form-control qtd-inteiro" required>`,
+                        `<input type="text" value="${item.valor.toFixed(2).replace('.', ',')}" class="form-control money-mask" required>`,
+                        `<input type="text" value="${item.descricao}" class="form-control">`,
+                        `<input type="text" value="${item.obs}" class="form-control">`,
+                        `<button type="button" class="btn btn-danger btn-sm remover-linha"><i class="fas fa-trash"></i></button>`
+                    ]).draw();
+                }
+            }
+            
+            // Aplicar máscaras
+            $('.money-mask').mask('#.##0,00', {reverse: true});
+            
+        } catch (error) {
+            console.error('Erro ao processar CSV:', error);
+            alert('Ocorreu um erro ao processar o arquivo CSV. Verifique o formato do arquivo.');
+        }
+    }
+
+    // Processar Excel
+    function processExcel(data) {
+        try {
+            const workbook = XLSX.read(data, {type: 'array'});
+            const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+            const jsonData = XLSX.utils.sheet_to_json(firstSheet, {header: 1});
+            
+            if (jsonData.length <= 1) {
+                alert('O arquivo Excel está vazio ou não possui dados válidos.');
+                return;
+            }
+            
+            // Processar linhas de dados
+            for (let i = 1; i < jsonData.length; i++) {
+                const rowData = jsonData[i];
+                
+                // Verificar se a linha tem dados suficientes
+                if (rowData.length >= 4) {
+                    let valor = 0;
+                    
+                    // Tratar diferentes formatos de valor
+                    if (typeof rowData[3] === 'number') {
+                        valor = rowData[3];
+                    } else if (typeof rowData[3] === 'string') {
+                        valor = parseFloat(rowData[3].replace('.', '').replace(',', '.')) || 0;
+                    }
+                    
+                    const item = {
+                        nome: rowData[0]?.toString().trim() || '',
+                        unidade: rowData[1]?.toString().trim() || 'UN',
+                        quantidade: parseInt(rowData[2]) || 1,
+                        valor: valor,
+                        descricao: rowData[4]?.toString().trim() || '',
+                        obs: rowData[5]?.toString().trim() || ''
+                    };
+                    
+                    // Adicionar à tabela
+                    tabelaItens.row.add([
+                        tabelaItens.rows().count() + 1,
+                        `<input type="text" value="${item.nome}" class="form-control" required>`,
+                        `<input type="text" value="${item.unidade}" class="form-control" required>`,
+                        `<input type="number" value="${item.quantidade}" class="form-control qtd-inteiro" required>`,
+                        `<input type="text" value="${item.valor.toFixed(2).replace('.', ',')}" class="form-control money-mask" required>`,
+                        `<input type="text" value="${item.descricao}" class="form-control">`,
+                        `<input type="text" value="${item.obs}" class="form-control">`,
+                        `<button type="button" class="btn btn-danger btn-sm remover-linha"><i class="fas fa-trash"></i></button>`
+                    ]).draw();
+                }
+            }
+            
+            // Aplicar máscaras
+            $('.money-mask').mask('#.##0,00', {reverse: true});
+            
+        } catch (error) {
+            console.error('Erro ao processar Excel:', error);
+            alert('Ocorreu um erro ao processar o arquivo Excel. Verifique o formato do arquivo.');
+        }
+    }
+
+    // Eventos de drag and drop
+    dropArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropArea.classList.add('dragover');
+        dropArea.innerHTML = 'Solte o arquivo aqui para importar';
+    });
+
+    dropArea.addEventListener('dragleave', () => {
+        dropArea.classList.remove('dragover');
+        dropArea.innerHTML = 'Arraste o arquivo aqui ou <input type="file" id="file-input" accept=".csv, .xlsx, .xls" class="form-control mt-2">';
+    });
+
+    dropArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropArea.classList.remove('dragover');
+        
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+            const file = files[0];
+            if (file.name.endsWith('.csv') || file.name.endsWith('.xlsx') || file.name.endsWith('.xls')) {
+                handleFile(file);
+            } else {
+                alert('Por favor, selecione um arquivo CSV ou Excel.');
+            }
+        }
+    });
+
+    // Evento de seleção de arquivo
+    fileInput.addEventListener('change', (e) => {
+        if (e.target.files.length > 0) {
+            const file = e.target.files[0];
+            if (file.name.endsWith('.csv') || file.name.endsWith('.xlsx') || file.name.endsWith('.xls')) {
+                handleFile(file);
+            } else {
+                alert('Por favor, selecione um arquivo CSV ou Excel.');
+            }
+        }
+    });
+
+    // Função para calcular total por item
+    function calcularItem(linha) {
+        const qtd = parseInt(linha.find('.qtd-inteiro').val()) || 0;
+        const valorUnitario = parseFloat(
+            linha.find('.money-mask').val().replace(/\./g, '').replace(',', '.')
+        ) || 0;
+
+        const totalItem = qtd * valorUnitario;
+        linha.find('.total-item').text(totalItem.toLocaleString('pt-BR', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        }));
+
+        return totalItem;
+    }
+
+    // Função para calcular o total geral
+    function calcularTotal() {
+        let totalGeral = 0;
+
+        $('#tabela-itens tbody tr').each(function() {
+            totalGeral += calcularItem($(this));
+        });
+
+        // Formata o total geral
+        $('#total-geral').text(totalGeral.toLocaleString('pt-BR', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        }));
+    }
+
+    // Calcular ao modificar valores
+    $(document).on('input', '.money-mask, .qtd-inteiro', function() {
+        calcularItem($(this).closest('tr'));
+        calcularTotal();
+    });
+
+    // Inicializar máscaras
+    $('.money-mask').mask('#.##0,00', {reverse: true});
 });
 </script>
