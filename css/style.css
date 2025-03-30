@@ -156,3 +156,8 @@ input{
 .file-upload-container {
   max-width: 500px;
 }
+
+/* Correção para -ms-high-contrast */
+@media (-ms-high-contrast: none) {
+  /* Suprimir warnings se necessário */
+}

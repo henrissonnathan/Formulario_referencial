@@ -15,20 +15,21 @@ $selectOptions = require __DIR__ . '/../configs/select-options.php';
         </div>
     </div>
     <div class="card-body">
-        <form name="formCadastro" method="post" action="salvar/formartar" id="formTermos" data-parsley-validate="">
-            <!-- pca -->
-            <label for="pca">TEM PREVISÃO NO PCA?</label>
-            <select name="pca" id="pca" class="form-control borda toggle-trigger" required data-parsley-required-message="Por favor,selecione uma opisão" data-toggle-target="#resposta-pca-container" data-toggle-values='["Sim"]'>
+        <form name="formCadastro" method="post" action="#" id="formTermos" data-parsley-validate="">
+            <!-- PCA -->
+            <label for="PCA">TEM PREVISÃO NO PCA?</label>
+            <select name="PCA" id="PCA" class="form-control borda toggle-select" required data-parsley-required-message="Por favor,selecione uma opção" data-target="#resposta-PCA-container" data-trigger-values='["Sim"]'>
+                
                 <option value="">Selecione uma opção</option>
-                <?php foreach ($selectOptions['pca'] as $value => $label): ?>
+                <?php foreach ($selectOptions['PCA'] as $value => $label): ?>
                     <option value="<?= $value ?>"><?= $label ?></option>
                 <?php endforeach; ?>
             </select>
             <br>
 
-            <div id="resposta-pca-container" class="toggleable-field" style="display: none;">
-                <label for="resposta-pca">Justifique:</label>
-                <input type="number" name="resposta-pca" id="resposta-pca" class="form-control borda" placeholder="Justifique">
+            <div id="resposta-PCA-container" class="toggleable-field" style="display: none;">
+                <label for="Explicasão_sdPCA">Justifique:</label>
+                <input type="text" name="Explicasão_sdPCA" id="Explicasão_sdPCA" class="form_sdcontrol borda" placeholder="Justifique">
             </div>
 
 
@@ -36,15 +37,15 @@ $selectOptions = require __DIR__ . '/../configs/select-options.php';
 
 
             <!-- orçamento(valor) -->
-            <label for="orcamento">INFORME A DOTAÇÃO ORÇAMENTÁRIA</label>
-            <input type="text" name="orcamento" id="orcamento" class="form-control borda money-mask" value="0,00" placeholder="Coloque um valor" required data-parsley-required-message="Por favor, preencha a Dotação orçamentária">
+            <label for="orcamento(valor)">INFORME A DOTAÇÃO ORÇAMENTÁRIA</label>
+            <input type="text" name="orcamento(valor)" id="orcamento(valor)" class="form-control borda money-mask"  placeholder="Coloque um valor" required data-parsley-required-message="Por favor, preencha a Dotação orçamentária">
 
 
 
 
             <!-- Natureza da contratação-->
             <label for="contrato">NATUREZA DA CONTRATAÇÃO</label>
-            <select name="contrato" id="contrato" class="form-control borda toggle-trigger" required data-toggle-target="#resposta-contrato" data-toggle-values='["Outros"]'>data-parsley-required-message="Por favor, selecione uma opisão">
+            <select name="contrato" id="contrato" class="form-control borda toggle-trigger" required data-target="#resposta-contrato" data-trigger-values='["Outros"]'>data-parsley-required-message="Por favor, selecione uma opisão">
                 <option value="">Selecione uma opção</option>
                 <?php foreach ($selectOptions['contrato'] as $value => $label): ?>
                     <option value="<?= $value ?>"><?= $label ?></option>
@@ -53,7 +54,7 @@ $selectOptions = require __DIR__ . '/../configs/select-options.php';
             <div id="resposta-contrato" class="toggleable-field" style="display: none;">
                 <label for="resposta-contrato">Informe:</label>
                 <input type="text" name="resposta-contrato" id="resposta-contrato" class="form-control borda" placeholder="INFORME:">
-            </div>
+            </div><br>
 
 
             <div class="mb-4">
@@ -107,7 +108,7 @@ $selectOptions = require __DIR__ . '/../configs/select-options.php';
 
             <!-- Modalidade-->
             <label for="modalidade">MODALIDADE</label>
-            <select name="modalidade" id="modalidade" class="form-control borda  toggle-trigger" required data-parsley-required-message="Por favor, selecione uma opisão" data-toggle-target="#modal" data-toggle-values='["Licitação","Inexigibilidade e licitação","Chamamento público",""]'>
+            <select name="modalidade" id="modalidade" class="form-control borda  toggle-select" required data-parsley-required-message="Por favor, selecione uma opisão" data-target="#modal" data-trigger-values='["Licitação","Inexigibilidade e licitação","Chamamento público"]'>
                 <option value="">Selecione uma opção</option>
                 <?php foreach ($selectOptions['modalidade'] as $value => $label): ?>
                     <option value="<?= $value ?>"><?= $label ?></option>
@@ -137,7 +138,7 @@ $selectOptions = require __DIR__ . '/../configs/select-options.php';
             </select>
             <!--definisão de quantidade-->
             <label for="levantamento">COMO FORAM DEFINIDAS AS QUANTIDADES</label>
-            <select name="levantamento" id="levantamento" class="form-control borda toggle-trigger" required data-parsley-required-message="Por favor, selecione uma opisão" data-toggle-target="#leve" data-toggle-values='["Outros"]'>
+            <select name="levantamento" id="levantamento" class="form-control borda toggle-trigger" required data-parsley-required-message="Por favor, selecione uma opisão" data-target="#leve" data-trigger-values='["Outros"]'>
                 <option value="">Selecione uma opção</option>
                 <?php foreach ($selectOptions['levantamento'] as $value => $label): ?>
                     <option value="<?= $value ?>"><?= $label ?></option>
@@ -145,8 +146,8 @@ $selectOptions = require __DIR__ . '/../configs/select-options.php';
             </select>
 
             <div id="leve" class="toggleable-field" style="display: none;">
-                <label for="leve-outro">Informe como foram definidas as quantidades</label>
-                <input type="text" name="leve-outro" id="leve-outro" class="form-control borda" placeholder="Informe como foram definidas as quantidades">
+                <label for="leve_outro">Informe como foram definidas as quantidades</label>
+                <input type="text" name="leve_outro" id="leve_outro" class="form_control borda" placeholder="Informe como foram definidas as quantidades">
             </div>
 
 
@@ -211,7 +212,7 @@ $selectOptions = require __DIR__ . '/../configs/select-options.php';
 
             <!--retrisão territorial -->
             <label for="retricao">VAI SER APLICADA RESTRIÇÃO TERRITORIAL?</label>
-            <select name="retricao" id="retricao" class="form-control borda toggle-trigger" required data-parsley-required-message="Por favor, selecione uma opisão" data-toggle-target="#terri" data-toggle-values='["sim. Restrição regional","sim. Restrição local","Outros"]'>
+            <select name="retricao" id="retricao" class="form-control borda toggle-trigger" required data-parsley-required-message="Por favor, selecione uma opisão" data-target="#terri" data-trigger-values='["sim. Restrição regional","sim. Restrição local","Outros"]'>
                 <option value="">Selecione uma opção</option>
                 <?php foreach ($selectOptions['retricao'] as $value => $label): ?>
                     <option value="<?= $value ?>"><?= $label ?></option>
@@ -238,7 +239,7 @@ $selectOptions = require __DIR__ . '/../configs/select-options.php';
 
             <!--FORMA DE SELEÇÃO*-->
             <label for="selecao">FORMA DE SELEÇÃO:</label>
-            <select name="selecao" id="selecao" class="form-control borda toggle-trigger" required data-parsley-required-message="Por favor, selecione uma opisão" data-toggle-target="#selecasta" data-toggle-values='["Presencial","Sem disputas"]'>
+            <select name="selecao" id="selecao" class="form-control borda toggle-trigger" required data-parsley-required-message="Por favor, selecione uma opisão" data-target="#selecasta" data-trigger-values='["Presencial","Sem disputas"]'>
                 <option value="">Selecione uma opção</option>
                 <?php foreach ($selectOptions['selecao'] as $value => $label): ?>
                     <option value="<?= $value ?>"><?= $label ?></option>
@@ -252,17 +253,17 @@ $selectOptions = require __DIR__ . '/../configs/select-options.php';
 
 
 
-            <!--ANALISE DE CONFORMIDADE DA PROPOSTA*-->
+            <!--ANALISE DE CONFORMIDADE DA PROPOSTA*  leve-outro-->
             <label for="proposta">ANALISE DE CONFORMIDADE DA PROPOSTA:</label>
-            <select name="proposta" id="proposta" class="form-control borda toggle-trigger" required data-parsley-required-message="Por favor, selecione uma opisão" data-toggle-target="#propostaas" data-toggle-values='["Amostra","Exame de conformidade","Prova de conceito"]'>
+            <select name="proposta" id="proposta" class="form-control borda toggle-trigger" required data-parsley-required-message="Por favor, selecione uma opisão" data-target="#propostas" data-trigger-values='["Amostra","Exame de conformidade","Prova de conceito"]'>
                 <option value="">Selecione uma opção</option>
                 <?php foreach ($selectOptions['proposta'] as $value => $label): ?>
                     <option value="<?= $value ?>"><?= $label ?></option>
                 <?php endforeach; ?>
             </select>
-            <div id="propostaas" class="toggleable-field" style="display: nene;">
-                <label for="propos-expli">Defina os quesitos</label>
-                <input type="text" name="propos-expli" id="propos-expli" class="form-control borda" placeholder="justifique">
+            <div id="propostas" class="toggleable-field" style="display: none;">
+                <label for="propos_expli">Defina os quesitos</label>
+                <input type="text" name="propos_expli" id="propos_expli" class="form-control borda" placeholder="justifique">
             </div>
 
 
@@ -349,9 +350,13 @@ $selectOptions = require __DIR__ . '/../configs/select-options.php';
             <label for="data">DATA E ASSINATURA</label>
             <input type="text" name="data" id="data" class="form-control borda" placeholder="Digite a datae e assinatura" required data-parsley-required-message="Por favor, preencha o compo">
 
+            <label for="destinatario">Email para envio:</label>
+            <input type="email" name="destinatario" id="destinatario" 
+             class="form-control borda" placeholder="Digite o email destino"
+             required data-parsley-required-message="Por favor, informe o email">
 
-            <button type="submit" class="btn btn-success">
-                <i class="fas fa-check"></i> Salvar Dados
+             <button type="submit" class="btn btn-success" id="btn-enviar">
+    <i class="fas fa-paper-plane"></i> Enviar por Email
             </button>
 
         </form>
@@ -384,7 +389,7 @@ $(document).ready(function() {
             }
         ],
         language: {
-            url: "//cdn.datatables.net/plug-ins/1.11.5/i18n/pt-BR.json",
+            url: "pt-BR.json",
             emptyTable: "Nenhum item cadastrado - adicione linhas ou importe dados",
             info: "Mostrando _START_ a _END_ de _TOTAL_ itens",
             infoEmpty: "Mostrando 0 itens",
@@ -413,7 +418,7 @@ $(document).ready(function() {
     // Adicionar nova linha
     $('#adicionar-linha').click(function() {
         const novaLinha = [
-            tabelaIten.rows().count() + 1,
+            tabelaItens.rows().count() + 1,
             `<input type="text" name="item[]" class="form-control" required>`,
             `<input type="text" name="unid[]" class="form-control unidade" value="UN" required>`,
             `<input type="number" name="qtd[]" class="form-control qtd-inteiro" min="1" value="1" required>`,
@@ -620,7 +625,7 @@ $(document).ready(function() {
         }
     });
 
-    // Função para calcular total por item
+    // Função para calcular total por item  proposta
     function calcularItem(linha) {
         const qtd = parseInt(linha.find('.qtd-inteiro').val()) || 0;
         const valorUnitario = parseFloat(
@@ -660,4 +665,125 @@ $(document).ready(function() {
     // Inicializar máscaras
     $('.money-mask').mask('#.##0,00', {reverse: true});
 });
+document.addEventListener('DOMContentLoaded', function() {
+    // Configuração dinâmica baseada nos selects
+    const toggleConfig = {
+        'PCA': {
+            target: 'resposta-PCA-container',
+            triggerValues: ['Sim']
+        },
+        'contrato': {
+            target: 'resposta-contrato',
+            triggerValues: ['Outros']
+        },
+        'modalidade': {
+        target: 'modal',
+        triggerValues: ['Licitação', 'Inexigibilidade e licitação', 'Chamamento público']
+        },
+        'levantamento': {
+            target: 'leve',
+            triggerValues: ['Outros']
+        },
+        'retricao': {
+            target: 'terri',
+            triggerValues: ['sim. Restrição regional', 'sim. Restrição local', 'Outros']
+        },
+        'selecao': {
+            target: 'selecasta',
+            triggerValues: ['Presencial', 'Sem disputas']
+        },
+        'proposta': {
+            target: 'propostas',
+            triggerValues: ['Amostra', 'Exame de conformidade', 'Prova de conceito']
+        }
+    };
+
+    // Função para gerenciar os toggles
+    function setupToggle(selectId, config) {
+        const select = document.getElementById(selectId);
+        const target = document.getElementById(config.target);
+
+        if (!select || !target) return;
+
+        const updateVisibility = () => {
+            const shouldShow = config.triggerValues.includes(select.value);
+            target.style.display = shouldShow ? 'block' : 'none';
+            
+            // Atualizar atributos required
+            target.querySelectorAll('input, select, textarea').forEach(input => {
+                input.required = shouldShow;
+                input.disabled = !shouldShow;
+                
+                // Resetar validação Parsley se existir
+                if (window.Parsley) {
+                    $(input).parsley().reset();
+                }
+            });
+        };
+
+        select.addEventListener('change', updateVisibility);
+        updateVisibility(); // Atualizar estado inicial
+    }
+
+    // Inicializar todos os toggles
+    Object.keys(toggleConfig).forEach(selectId => {
+        setupToggle(selectId, toggleConfig[selectId]);
+    });
+
+    // Inicializar Parsley
+    if (window.Parsley) {
+        $('#formTermos').parsley({
+            errorClass: 'is-invalid',
+            successClass: 'is-valid',
+            errorsWrapper: '<div class="invalid-feedback"></div>',
+            errorTemplate: '<span></span>'
+        });
+    }
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    const formulario = document.getElementById('formTermos');
+    
+    formulario.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const btnEnviar = document.getElementById('btn-enviar');
+        btnEnviar.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
+        btnEnviar.disabled = true;
+
+        const formData = new FormData(this);
+        
+        // Capturar dados da tabela
+        const tableData = [];
+        document.querySelectorAll('#tabela-itens tbody tr').forEach(linha => {
+            tableData.push({
+                item: linha.querySelector('input[name="item[]"]').value,
+                unid: linha.querySelector('input[name="unid[]"]').value,
+                qtd: linha.querySelector('input[name="qtd[]"]').value,
+                valor_unitario: linha.querySelector('input[name="valor_unitario[]"]').value,
+                descricao: linha.querySelector('input[name="descricao[]"]').value,
+                obs: linha.querySelector('input[name="obs[]"]').value
+            });
+        });
+        
+        formData.append('tableData', JSON.stringify(tableData));
+
+        fetch('enviar-email.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.text())
+        .then(data => {
+            alert(data);
+            btnEnviar.innerHTML = '<i class="fas fa-paper-plane"></i> Enviar por Email';
+            btnEnviar.disabled = false;
+        })
+        .catch(error => {
+            alert('Erro: ' + error.message);
+            btnEnviar.innerHTML = '<i class="fas fa-paper-plane"></i> Enviar por Email';
+            btnEnviar.disabled = false;
+        });
+    });
+});
+
 </script>

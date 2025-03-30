@@ -1,5 +1,17 @@
-RewriteEngine on
-RewriteCond %{SCRIPT_FILENAME} !-f
-RewriteCond %{SCRIPT_FILENAME} !-d
-RewriteCond %{REQUEST_URI} !^/index\.php [NC]
-RewriteRule ^(.*)$ index.php?param=$1
+<IfModule mod_headers.c>
+    # Habilita CORS para todos os tipos de arquivo
+    Header always set Access-Control-Allow-Origin "*"
+    Header always set Access-Control-Allow-Methods "GET, POST, OPTIONS"
+    Header always set Access-Control-Allow-Headers "Content-Type, Authorization"
+</IfModule>
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    
+    # Ignora arquivos e diretórios reais
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    
+    # Redireciona tudo para index.php
+    RewriteRule ^(.*)$ index.php?param=$1 [QSA,L]
+</IfModule>

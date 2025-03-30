@@ -2,7 +2,7 @@
 // Configurações para os selects
 return [
     //Previsão pca
-    'pca' => [
+    'PCA' => [
         'PCA não elaborado' => 'PCA não elaborado',
         'Não' => 'Não',
         'Sim' =>'Sim'
