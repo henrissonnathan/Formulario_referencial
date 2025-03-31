@@ -1,70 +1,97 @@
 <?php
-// Arquivo: enviar-email.php
+// salvar/enviar-email.php
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 
-// Configurações
-$para = 'seu-email@exemplo.com'; // ALTERE PARA SEU EMAIL
+require '../phpmailer/src/Exception.php';
+require '../phpmailer/src/PHPMailer.php';
+require '../phpmailer/src/SMTP.php';
+
+// Configurações SMTP (exemplo para Gmail)
+$smtp_host = 'smtp.gmail.com';
+$smtp_usuario = 'codigotexte@gmail.com';
+$smtp_senha = 'wnxu gpkc kvxn lukt'; // Use senha de aplicativo
+$smtp_porta = 587;
+$smtp_remetente = 'codigotexte@gmail.com';
+$nome_remetente = 'Sistema de Termos';
+
+date_default_timezone_set('America/Sao_Paulo');
+
+// Dados do formulário
+$para = 'hrnrisson@gmail.com';
 $assunto = 'Termo de Referência - ' . date('d/m/Y H:i');
 
 // Gerar conteúdo CSV
 $csvContent = "DADOS PRINCIPAIS\n";
-
+$camposReservados = ['item', 'unid', 'qtd', 'valor_unitario', 'descricao', 'obs'];
 // Processar dados do formulário
-foreach($_POST as $key => $value) {
-    if($key !== 'tableData') {
-        $csvContent .= strtoupper($key) . ";" . htmlspecialchars($value) . "\n";
+foreach ($_POST as $key => $value) {
+    if ($key === 'tableData' || in_array(strtolower($key), $camposReservados)) {
+        continue;
     }
+    
+    if (is_array($value)) {
+        $value = implode(', ', $value);
+    }
+    
+    $csvContent .= strtoupper($key) . ";" . htmlspecialchars($value) . "\n";
 }
 
 // Processar dados da tabela
 $csvContent .= "\nITENS\n";
 $csvContent .= "Item;Unidade;Quantidade;Valor Unitário;Descrição;Observação\n";
 
-if(isset($_POST['tableData'])) {
+if (isset($_POST['tableData'])) {
     $tableData = json_decode($_POST['tableData'], true);
     
-    foreach($tableData as $item) {
+    foreach ($tableData as $item) {
+        // Converter valor unitário para formato numérico seguro
+        $valorUnitario = str_replace(['.', ','], ['', '.'], $item['valor_unitario'] ?? '0.00');
+    
         $csvContent .= implode(';', [
-            $item['item'],
-            $item['unidade'],
-            $item['quantidade'],
-            str_replace(['.', ','], ['', '.'], $item['valor_unitario']),
-            $item['descricao'],
-            $item['obs']
+            $item['item'] ?? '',
+            $item['unid'] ?? 'UN',
+            $item['quantidade'] ?? 0,
+            $valorUnitario,
+            $item['descricao'] ?? '',
+            $item['obs'] ?? ''
         ]) . "\n";
     }
 }
 
-// Criar boundary único
-$boundary = md5(time());
+try {
+    $mail = new PHPMailer(true);
+    
+    // Configuração SMTP
+    $mail->isSMTP();
+    $mail->Host = $smtp_host;
+    $mail->SMTPAuth = true;
+    $mail->Username = $smtp_usuario;
+    $mail->Password = $smtp_senha;
+    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+    $mail->Port = $smtp_porta;
+    $mail->CharSet = 'UTF-8';
 
-// Headers básicos
-$headers = "From: sistema@seusite.com\r\n";
-$headers .= "MIME-Version: 1.0\r\n";
-$headers .= "Content-Type: multipart/mixed; boundary=\"" . $boundary . "\"\r\n";
+    // Remetente/Destinatário
+    $mail->setFrom($smtp_remetente, $nome_remetente);
+    $mail->addAddress($para);
 
-// Corpo da mensagem
-$body = "--$boundary\r\n";
-$body .= "Content-Type: text/plain; charset=\"utf-8\"\r\n";
-$body .= "Content-Transfer-Encoding: 7bit\r\n\r\n";
-$body .= "Segue em anexo o Termo de Referência gerado.\r\n\r\n";
+    // Anexar CSV
+    $mail->addStringAttachment($csvContent, 'termo-referencia.csv', 'base64', 'text/csv');
 
-// Anexar arquivo CSV
-$body .= "--$boundary\r\n";
-$body .= "Content-Type: text/csv; name=\"termo-referencia.csv\"\r\n";
-$body .= "Content-Disposition: attachment; filename=\"termo-referencia.csv\"\r\n";
-$body .= "Content-Transfer-Encoding: base64\r\n\r\n";
-$body .= chunk_split(base64_encode($csvContent)) . "\r\n";
-$body .= "--$boundary--";
+    // Conteúdo do email
+    $mail->isHTML(false);
+    $mail->Subject = $assunto;
+    $mail->Body = "Segue em anexo o Termo de Referência gerado.\n\n";
 
-// Enviar email
-if(mail($para, $assunto, $body, $headers)) {
+    $mail->send();
     echo "Email enviado com sucesso para $para!";
-} else {
+    
+} catch (Exception $e) {
     http_response_code(500);
-    echo "Falha ao enviar email. Verifique:";
-    echo "<ul>";
-    echo "<li>Configuração do servidor SMTP</li>";
-    echo "<li>Se o email não caiu na pasta de spam</li>";
-    echo "<li>Logs do servidor</li>";
-    echo "</ul>";
+    echo "Erro ao enviar email: {$mail->ErrorInfo}\n";
+    echo "Verifique:\n";
+    echo "- Configurações SMTP\n";
+    echo "- Senha de aplicativo (se usar Gmail)\n";
+    echo "- Firewall/antivírus";
 }

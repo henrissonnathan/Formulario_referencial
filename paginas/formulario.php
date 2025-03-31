@@ -4,7 +4,7 @@ if (!isset($pagina)) {
 }
 ?>
 <?php
-// Inclui o arquivo de configuração
+// Inclui o arquivo de configuração formTermos
 $selectOptions = require __DIR__ . '/../configs/select-options.php';
 ?>
 
@@ -285,10 +285,10 @@ $selectOptions = require __DIR__ . '/../configs/select-options.php';
 
 
 
-            <!-- UNIDADE REQUISITANTE -->
+            <!-- unid REQUISITANTE -->
             <div class="mb-3">
-                <label for="proposta" class="form-label">UNIDADE REQUISITANTE</label>
-                <select name="proposta" id="proposta" class="form-control borda" required data-parsley-required-message="Por favor, selecione uma opção">
+                <label for="proposta" class="form-label">unid REQUISITANTE</label>
+                <select name="proposta_unidade" id="proposta_unidade" class="form-control borda" required data-parsley-required-message="Por favor, selecione uma opção">
                     <option value="">Selecione uma opção</option>
                     <?php foreach ($selectOptions['requisitante'] as $value => $label): ?>
                         <option value="<?= $value ?>"><?= $label ?></option>
@@ -346,14 +346,11 @@ $selectOptions = require __DIR__ . '/../configs/select-options.php';
             <br>
 
 
-            <!--PRAZO DE EXECUÇÃO-->
+            <!--PRAZO DE EXECUÇÃO       DOMContentLoaded    #adicionar -->
             <label for="data">DATA E ASSINATURA</label>
             <input type="text" name="data" id="data" class="form-control borda" placeholder="Digite a datae e assinatura" required data-parsley-required-message="Por favor, preencha o compo">
 
-            <label for="destinatario">Email para envio:</label>
-            <input type="email" name="destinatario" id="destinatario" 
-             class="form-control borda" placeholder="Digite o email destino"
-             required data-parsley-required-message="Por favor, informe o email">
+           
 
              <button type="submit" class="btn btn-success" id="btn-enviar">
     <i class="fas fa-paper-plane"></i> Enviar por Email
@@ -368,9 +365,11 @@ $selectOptions = require __DIR__ . '/../configs/select-options.php';
 <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.html5.min.js"></script>
 
 <script>
+let tabelaItens; // Declaração global
+
 $(document).ready(function() {
     // Inicializar DataTables com paginação
-    const tabelaItens = $('#tabela-itens').DataTable({
+    tabelaItens = $('#tabela-itens').DataTable({
         paging: true,
         pageLength: 10, // 10 itens por página
         lengthMenu: [[5, 10, 20, 50, -1], [5, 10, 20, 50, "Todos"]],
@@ -406,33 +405,64 @@ $(document).ready(function() {
                 previous: "Anterior"
             }
         },
-        columnDefs: [
-            
-            {targets: '_all', // Aplica a todas as colunas
-                searchable: false // Desativa a pesquisa
-                }
-            
-        ]
-    });
+        
+        columns: [
+        { data: 'id' },
+        { data: 'item' },
+        { data: 'unid' },
+        { data: 'quantidade' },
+        { data: 'valor_unitario' },
+        { data: 'descricao' },
+        { data: 'obs' },
+        { data: 'acoes' }
+    ],
+    createdRow: function(row, data, index) {
+        // Vincular os inputs aos dados da linha
+        $(row).find('td').eq(1).html(`<input type="text" class="form-control" name="item[]" value="${data.item}">`);
+        $(row).find('td').eq(2).html(`<input type="text" class="form-control" name="unid[]" value="${data.unid}">`);
+        $(row).find('td').eq(3).html(`<input type="number" class="form-control qtd-inteiro" name="qtd[]" value="${data.quantidade}">`);
+        $(row).find('td').eq(4).html(`<input type="text" class="form-control money-mask" name="valor_unitario[]" value="${data.valor_unitario}">`);
+        $(row).find('td').eq(5).html(`<input type="text" class="form-control" name="descricao[]" value="${data.descricao}">`);
+        $(row).find('td').eq(6).html(`<input type="text" class="form-control" name="obs[]" value="${data.obs}">`);
+        // Aplicar máscaras
+        $(row).find('.money-mask').mask('#.##0,00', { reverse: true });
+    }
+});
+$('#adicionar-fonte').click(function() {
+    // Clona a primeira linha e remove atributos desnecessários
+    const novaLinha = $('.fonte-item').first().clone();
+    novaLinha.find('select').val(''); // Limpa o valor selecionado
+    novaLinha.find('.remover-fonte').prop('disabled', false); // Habilita o botão de remover
+    $('#fontes-container').append(novaLinha);
+});
 
-    // Adicionar nova linha
+// Remover fonte de pesquisa
+$('#fontes-container').on('click', '.remover-fonte', function() {
+    // Mantém no mínimo 2 linhas (obrigatórias)
+    if ($('.fonte-item').length > 2) {
+        $(this).closest('.fonte-item').remove();
+    }
+});
+
+    // Adicionar nova linha   
     $('#adicionar-linha').click(function() {
-        const novaLinha = [
-            tabelaItens.rows().count() + 1,
-            `<input type="text" name="item[]" class="form-control" required>`,
-            `<input type="text" name="unid[]" class="form-control unidade" value="UN" required>`,
-            `<input type="number" name="qtd[]" class="form-control qtd-inteiro" min="1" value="1" required>`,
-            `<input type="text" name="valor_unitario[]" class="form-control money-mask" required>`,
-            `<input type="text" name="descricao[]" class="form-control">`,
-            `<input type="text" name="obs[]" class="form-control">`,
-            `<button type="button" class="btn btn-danger btn-sm remover-linha"><i class="fas fa-trash"></i></button>`
-        ];
-        
-        tabelaItens.row.add(novaLinha).draw();
-        
-        // Aplica máscaras aos novos campos
-        $('.money-mask').mask('#.##0,00', {reverse: true});
-    });
+    const novaLinha = {
+        id: tabelaItens.rows().count() + 1,
+        item: '',
+        unid: 'UN',
+        quantidade: 1,
+        valor_unitario: '0,00',
+        descricao: '',
+        obs: '',
+        acoes: '<button type="button" class="btn btn-danger btn-sm remover-linha"><i class="fas fa-trash"></i></button>'
+    };
+
+    tabelaItens.row.add(novaLinha).draw();
+
+    // Aplicar máscaras aos novos campos
+    const linhaAdicionada = $('#tabela-itens tbody tr:last');
+    linhaAdicionada.find('.money-mask').mask('#.##0,00', { reverse: true });
+});
 
     // Remover última linha
     $('#remover-linha').click(function() {
@@ -491,32 +521,31 @@ $(document).ready(function() {
             
             // Processar linhas de dados
             for (let i = 1; i < rows.length; i++) {
-                const rowData = rows[i].split(',');
-                
-                // Verificar se a linha tem dados suficientes
-                if (rowData.length >= 4) {
-                    const item = {
-                        nome: rowData[0]?.trim() || '',
-                        unidade: rowData[1]?.trim() || 'UN',
-                        quantidade: parseInt(rowData[2]?.trim()) || 1,
-                        valor: parseFloat(rowData[3]?.trim().replace('.', '').replace(',', '.')) || 0,
-                        descricao: rowData[4]?.trim() || '',
-                        obs: rowData[5]?.trim() || ''
-                    };
-                    
-                    // Adicionar à tabela
-                    tabelaItens.row.add([
-                        tabelaItens.rows().count() + 1,
-                        `<input type="text" value="${item.nome}" class="form-control" required>`,
-                        `<input type="text" value="${item.unidade}" class="form-control" required>`,
-                        `<input type="number" value="${item.quantidade}" class="form-control qtd-inteiro" required>`,
-                        `<input type="text" value="${item.valor.toFixed(2).replace('.', ',')}" class="form-control money-mask" required>`,
-                        `<input type="text" value="${item.descricao}" class="form-control">`,
-                        `<input type="text" value="${item.obs}" class="form-control">`,
-                        `<button type="button" class="btn btn-danger btn-sm remover-linha"><i class="fas fa-trash"></i></button>`
-                    ]).draw();
-                }
+            const rowData = rows[i].split(',');
+
+            // Verificar se a linha tem dados suficientes
+            if (rowData.length >= 4) {
+                const nome = rowData[0]?.trim() || '';
+                const unid = rowData[1]?.trim() || 'UN';
+                const quantidade = parseInt(rowData[2]?.trim()) || 1;
+                const valor = parseFloat(rowData[3]?.trim().replace('.', '').replace(',', '.')) || 0;
+                const descricao = rowData[4]?.trim() || '';
+                const obs = rowData[5]?.trim() || '';
+
+                const item = {
+                    id: tabelaItens.rows().count() + 1,
+                    item: nome,
+                    unid: unid,
+                    quantidade: quantidade,
+                    valor_unitario: valor.toFixed(2).replace('.', ','),
+                    descricao: descricao,
+                    obs: obs,
+                    acoes: '<button type="button" class="btn btn-danger btn-sm remover-linha"><i class="fas fa-trash"></i></button>'
+                };
+
+                tabelaItens.row.add(item).draw(); // Adicionar à tabela
             }
+        }
             
             // Aplicar máscaras
             $('.money-mask').mask('#.##0,00', {reverse: true});
@@ -543,39 +572,29 @@ $(document).ready(function() {
             for (let i = 1; i < jsonData.length; i++) {
                 const rowData = jsonData[i];
                 
-                // Verificar se a linha tem dados suficientes
-                if (rowData.length >= 4) {
-                    let valor = 0;
-                    
-                    // Tratar diferentes formatos de valor
-                    if (typeof rowData[3] === 'number') {
-                        valor = rowData[3];
-                    } else if (typeof rowData[3] === 'string') {
-                        valor = parseFloat(rowData[3].replace('.', '').replace(',', '.')) || 0;
-                    }
-                    
-                    const item = {
-                        nome: rowData[0]?.toString().trim() || '',
-                        unidade: rowData[1]?.toString().trim() || 'UN',
-                        quantidade: parseInt(rowData[2]) || 1,
-                        valor: valor,
-                        descricao: rowData[4]?.toString().trim() || '',
-                        obs: rowData[5]?.toString().trim() || ''
-                    };
-                    
-                    // Adicionar à tabela
-                    tabelaItens.row.add([
-                        tabelaItens.rows().count() + 1,
-                        `<input type="text" value="${item.nome}" class="form-control" required>`,
-                        `<input type="text" value="${item.unidade}" class="form-control" required>`,
-                        `<input type="number" value="${item.quantidade}" class="form-control qtd-inteiro" required>`,
-                        `<input type="text" value="${item.valor.toFixed(2).replace('.', ',')}" class="form-control money-mask" required>`,
-                        `<input type="text" value="${item.descricao}" class="form-control">`,
-                        `<input type="text" value="${item.obs}" class="form-control">`,
-                        `<button type="button" class="btn btn-danger btn-sm remover-linha"><i class="fas fa-trash"></i></button>`
-                    ]).draw();
-                }
+               // Verificar se a linha tem dados suficientes
+               if (rowData.length >= 4) {
+                const nome = rowData[0]?.toString().trim() || '';
+                const unid = rowData[1]?.toString().trim() || 'UN';
+                const quantidade = parseInt(rowData[2]) || 1;
+                const valor = parseFloat(rowData[3]?.toString().replace('.', '').replace(',', '.')) || 0;
+                const descricao = rowData[4]?.toString().trim() || '';
+                const obs = rowData[5]?.toString().trim() || '';
+
+                const item = {
+                    id: tabelaItens.rows().count() + 1,
+                    item: nome,
+                    unid: unid,
+                    quantidade: quantidade,
+                    valor_unitario: valor.toFixed(2).replace('.', ','),
+                    descricao: descricao,
+                    obs: obs,
+                    acoes: '<button type="button" class="btn btn-danger btn-sm remover-linha"><i class="fas fa-trash"></i></button>'
+                };
+
+                tabelaItens.row.add(item).draw(); // Adicionar à tabela
             }
+        }
             
             // Aplicar máscaras
             $('.money-mask').mask('#.##0,00', {reverse: true});
@@ -625,21 +644,30 @@ $(document).ready(function() {
         }
     });
 
-    // Função para calcular total por item  proposta
-    function calcularItem(linha) {
-        const qtd = parseInt(linha.find('.qtd-inteiro').val()) || 0;
-        const valorUnitario = parseFloat(
-            linha.find('.money-mask').val().replace(/\./g, '').replace(',', '.')
-        ) || 0;
+    // Função para calcular total por item
+function calcularItem(linha) {
+    // Obter elementos corretamente dentro da linha
+    const qtdInput = linha.find('input[name="qtd[]"]');
+    const valorInput = linha.find('input[name="valor_unitario[]"]');
+    
+    // Verificar se os elementos existem
+    if (!qtdInput.length || !valorInput.length) return 0;
 
-        const totalItem = qtd * valorUnitario;
-        linha.find('.total-item').text(totalItem.toLocaleString('pt-BR', {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
-        }));
+    const qtd = parseInt(qtdInput.val()) || 0;
+    const valorUnitario = parseFloat(
+        valorInput.val().replace(/\./g, '').replace(',', '.')
+    ) || 0;
 
-        return totalItem;
-    }
+    const totalItem = qtd * valorUnitario;
+    
+    // Atualizar exibição se necessário
+    linha.find('.total-item').text(totalItem.toLocaleString('pt-BR', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    }));
+
+    return totalItem;
+}
 
     // Função para calcular o total geral
     function calcularTotal() {
@@ -657,10 +685,11 @@ $(document).ready(function() {
     }
 
     // Calcular ao modificar valores
-    $(document).on('input', '.money-mask, .qtd-inteiro', function() {
-        calcularItem($(this).closest('tr'));
-        calcularTotal();
-    });
+$(document).on('input', '.money-mask, .qtd-inteiro', function() {
+    const linha = $(this).closest('tr');
+    calcularItem(linha);
+    calcularTotal();
+});
 
     // Inicializar máscaras
     $('.money-mask').mask('#.##0,00', {reverse: true});
@@ -751,24 +780,32 @@ document.addEventListener('DOMContentLoaded', function() {
         btnEnviar.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
         btnEnviar.disabled = true;
 
-        const formData = new FormData(this);
-        
-        // Capturar dados da tabela
+        // Coletar dados da tabela CORRETAMENTE}
+      
+   
+        // Coletar dados usando a API do DataTables
         const tableData = [];
-        document.querySelectorAll('#tabela-itens tbody tr').forEach(linha => {
-            tableData.push({
-                item: linha.querySelector('input[name="item[]"]').value,
-                unid: linha.querySelector('input[name="unid[]"]').value,
-                qtd: linha.querySelector('input[name="qtd[]"]').value,
-                valor_unitario: linha.querySelector('input[name="valor_unitario[]"]').value,
-                descricao: linha.querySelector('input[name="descricao[]"]').value,
-                obs: linha.querySelector('input[name="obs[]"]').value
-            });
+        tabelaItens.rows({ search: 'applied', page: 'all' }).every(function() {
+            const row = this.node();
+            const valorInput = $(row).find('input[name="valor_unitario[]"]').val() || '0,00';
+            const valorNumerico = valorInput.replace(/[^\d,]/g, '').replace(',', '.');
+
+            const rowData = {
+                item: $(row).find('input[name="item[]"]').val() || '',
+                unid: $(row).find('input[name="unid[]"]').val() || 'UN',
+                quantidade: $(row).find('input[name="qtd[]"]').val() || 1,
+                valor_unitario: valorNumerico || '0.00',
+                descricao: $(row).find('input[name="descricao[]"]').val() || '',
+                obs: $(row).find('input[name="obs[]"]').val() || ''
+            };
+            tableData.push(rowData);
         });
-        
+       
+
+        const formData = new FormData(formulario);
         formData.append('tableData', JSON.stringify(tableData));
 
-        fetch('enviar-email.php', {
+        fetch('salvar/enviar-email.php', {
             method: 'POST',
             body: formData
         })
@@ -785,5 +822,5 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
-
+// process
 </script>

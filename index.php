@@ -46,14 +46,8 @@ date_default_timezone_set('America/Sao_Paulo');
     <?php
     //definir uma variavel $pagina
   
-    //incluir o header
    
-    //verificar se a pessoa esta logada
-    //se não estiver mostrar o formulário de login
-    //if (!isset($_SESSION["usuarioAdm"]["id"])) {
-    // require "paginas/login.php";
-    // } else {
-    //definir uma variavel $pageina
+
     $pagina = "formulario";
     //incluir o header
     require "header.php";
@@ -103,4 +97,7 @@ date_default_timezone_set('America/Sao_Paulo');
 <!-- DataTables Buttons JS -->
 <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js">
+
+    
+</script>
