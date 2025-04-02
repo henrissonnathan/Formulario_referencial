@@ -14,7 +14,7 @@ date_default_timezone_set('America/Sao_Paulo');
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Formulario
-</title>
+    </title>
     <base href="<?= $base ?>formulario">
 
     <!----- arquivos css ---->
@@ -26,9 +26,9 @@ date_default_timezone_set('America/Sao_Paulo');
     <link rel="stylesheet" href="css/sweetalert2.min.css">
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/style.css">
-   
+
     <!----- arquivos javascript ---->
-    
+
     <script src="js/jquery-3.5.1.min.js"></script>
     <script src="js/bootstrap.bundle.min.js"></script>
     <script src="js/datatables.min.js"></script>
@@ -42,11 +42,11 @@ date_default_timezone_set('America/Sao_Paulo');
 </head>
 
 <body>
-    
+
     <?php
     //definir uma variavel $pagina
-  
-   
+
+
 
     $pagina = "formulario";
     //incluir o header
@@ -62,7 +62,7 @@ date_default_timezone_set('America/Sao_Paulo');
     $pasta = $param[0] ?? NULL;
     $arquivo = $param[1] ?? NULL;
     $id = $param[2] ?? NULL;
-   // echo $pasta;
+    // echo $pasta;
     if (($pasta == "formulario") or ($pasta == "index.php")) {
         $pagina = "paginas/formulario.php";
     } else {
@@ -84,7 +84,7 @@ date_default_timezone_set('America/Sao_Paulo');
 
 </html>
 <!-- DataTables JS -->
- <!-- DataTables CSS -->
+<!-- DataTables CSS -->
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
@@ -99,5 +99,5 @@ date_default_timezone_set('America/Sao_Paulo');
 <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js">
 
-    
+
 </script>
