@@ -6,6 +6,7 @@
 			Swal.fire({
 				title: '{$titulo}',
 				text: '{$msg}',
+				icon:error,
 			}).then((result) => {
 				history.back();
 			});

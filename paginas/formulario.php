@@ -31,17 +31,19 @@ $selectOptions = require __DIR__ . '/../configs/select-options.php';
 
                         <div class="opcoes-box-container" required data-toggle-target="#resposta-PCA-container">
                             <?php foreach ($selectOptions['PCA'] as $value => $label): ?>
-                                <div class="opcao-box" data-value="<?= $value ?>" data-trigger-values='<?= ($label === "Sim") ? '["Sim"]' : '[]' ?>'>
+                                <div class="opcao-box"
+                                    data-value="<?= $value ?>"
+                                    data-trigger-values='<?= ($label === "Sim") ? '["Sim"]' : '[]' ?>'>
                                     <?= $label ?>
                                 </div>
                             <?php endforeach; ?>
+
+                            <input type="hidden" name="PCA" id="PCA" required>
                         </div>
-                        <input type="hidden" name="PCA" id="PCA" required>
-
                         <div id="resposta-PCA-container" class="toggleable-field" style="display: none;">
-                            <label for="Explicasão_sdPCA">Justifique:</label>
-                            <input type="text" name="Explicasão_sdPCA" id="Explicasão_sdPCA" class="form-control borda" placeholder="Justifique">
-
+                            <label for="Explicacao_sdPCA">Justifique:</label>
+                            <input type="text" name="Explicacao_sdPCA" id="Explicacao_sdPCA"
+                                class="form-control borda" placeholder="Justifique" required>
                         </div>
                     </div>
 
@@ -855,6 +857,14 @@ $selectOptions = require __DIR__ . '/../configs/select-options.php';
                     atualizarToggles();
                 }
             });
+            // Validação em tempo real (seu código novo)
+            hiddenInput.on('change', function() {
+                if (!this.value) {
+                    container.addClass('nao-preenchido');
+                } else {
+                    container.removeClass('nao-preenchido');
+                }
+            });
         });
 
         function atualizarToggles() {
@@ -866,7 +876,7 @@ $selectOptions = require __DIR__ . '/../configs/select-options.php';
 
                 if (target.length && selectedOption.length) {
                     const triggerValues = selectedOption.data('trigger-values') || [];
-                    const shouldShow = triggerValues.includes(selectedOption.text().trim());
+                    const shouldShow = triggerValues.length > 0;
 
                     target.toggle(shouldShow);
                     target.find('input, select, textarea')
@@ -876,239 +886,204 @@ $selectOptions = require __DIR__ . '/../configs/select-options.php';
             });
         }
 
-        // Disparar quando uma opção é selecionada
-        $(document).on('click', '.opcao-box', function() {
-            setTimeout(atualizarToggles, 10);
-        });
-        // [NOVO] VALIDAÇÃO NO ENVIO DO FORMULÁRIO
+        // Remova o código antigo de validação no submit e substitua por este:
         $('form').on('submit', function(e) {
+            e.preventDefault();
             let formValido = true;
+            const camposInvalidos = [];
 
-            $('.opcoes-box-container').each(function() {
-                const container = $(this);
-                const hiddenInput = container.find('input[type="hidden"]');
-                const errorMessage = container.find('.erro-validacao');
+            // Verificar todos os steps
+            $('.step-form').each(function() {
+                const step = $(this);
+                const camposStep = getCamposNaoPreenchidos(step[0]);
 
-                // Validação do campo
-                if (!hiddenInput.val()) {
-                    errorMessage.show();
+                if (camposStep.length > 0) {
                     formValido = false;
-                } else {
-                    errorMessage.hide();
+                    camposInvalidos.push({
+                        step: step.data('step'),
+                        campos: camposStep
+                    });
                 }
             });
 
-            // Impede envio se inválido
             if (!formValido) {
-                e.preventDefault();
-                // Scroll para o primeiro erro
-                $('html, body').animate({
-                    scrollTop: $('.erro-validacao:visible').first().offset().top - 100
-                }, 500);
+                const mensagem = camposInvalidos.map(item =>
+                    `Passo ${item.step}:<br>- ${item.campos.join('<br>- ')}`
+                ).join('<br><br>');
+
+                Swal.fire({
+                    title: 'Formulário incompleto!',
+                    html: `Preencha os seguintes campos:<br><br>${mensagem}`,
+                    icon: 'error',
+                    didOpen: () => {
+                        const primeiroErro = $('.nao-preenchido').first();
+                        if (primeiroErro.length) {
+                            $('html, body').animate({
+                                scrollTop: primeiroErro.offset().top - 100
+                            }, 500);
+                        }
+                    }
+                });
+            } else {
+                // Enviar formulário se estiver válido
+                this.submit();
             }
         });
-    });
-    document.addEventListener('DOMContentLoaded', function() {
-                // Configuração dinâmica baseada nos selects
-                const toggleConfig = {
-                    'PCA': {
-                        target: 'resposta-PCA-container',
-                        triggerValues: ['Sim']
-                    },
-                    'contrato': {
-                        target: 'resposta-contrato',
-                        triggerValues: ['Outros']
-                    },
-                    'modalidade': {
-                        target: 'modal',
-                        triggerValues: ['Licitação', 'Inexigibilidade e licitação', 'Chamamento público']
-                    },
-                    'levantamento': {
-                        target: 'leve',
-                        triggerValues: ['Outros']
-                    },
-                    'retricao': {
-                        target: 'terri',
-                        triggerValues: ['sim. Restrição regional', 'sim. Restrição local', 'Outros']
-                    },
-                    'selecao': {
-                        target: 'selecasta',
-                        triggerValues: ['Presencial', 'Sem disputas']
-                    },
-                    'proposta': {
-                        target: 'propostas',
-                        triggerValues: ['Amostra', 'Exame de conformidade', 'Prova de conceito']
+
+        // Mantenha este código para o controle das caixas de seleção
+        $('.opcoes-box-container').each(function() {
+            const container = $(this);
+            const hiddenInput = container.find('input[type="hidden"]');
+            const errorMessage = container.find('.erro-validacao');
+
+            container.find('.opcao-box').on('click', function() {
+                const opcao = $(this);
+
+                container.find('.opcao-box').removeClass('selecionado');
+                opcao.addClass('selecionado');
+
+                hiddenInput.val(opcao.data('value')).trigger('change');
+                container.removeClass('nao-preenchido');
+                errorMessage.hide();
+
+                if (typeof atualizarToggles === 'function') atualizarToggles();
+            });
+
+            hiddenInput.on('change', function() {
+                container.toggleClass('nao-preenchido', !this.value);
+            });
+        });
+
+        // Ensure only the first step is visible initially
+        $('.step-form').hide();
+        $('.step-form[data-step="1"]').show().addClass('active');
+
+        // Function to navigate between steps
+        function navigateSteps(direction) {
+            const currentStep = $('.step-form.active');
+            const currentStepNumber = parseInt(currentStep.data('step'));
+            const nextStepNumber = direction === 'next' ? currentStepNumber + 1 : currentStepNumber - 1;
+            const nextStep = $(`.step-form[data-step="${nextStepNumber}"]`);
+
+            if (nextStep.length) {
+                if (direction === 'next' && !validateStep(currentStep)) return;
+
+                currentStep.removeClass('active').hide();
+                nextStep.addClass('active').fadeIn();
+            }
+        }
+
+        // Validate the current step
+        function validateStep(step) {
+            let isValid = true;
+            const invalidFields = getCamposNaoPreenchidos(step);
+
+            if (invalidFields.length > 0) {
+                isValid = false;
+                const stepNumber = step.data('step');
+                const message = `Passo ${stepNumber}: Preencha os seguintes campos:<br>- ${invalidFields.join('<br>- ')}`;
+
+                Swal.fire({
+                    title: 'Campos obrigatórios',
+                    html: message,
+                    icon: 'error',
+                    didOpen: () => {
+                        $('html, body').animate({
+                            scrollTop: step.find('.nao-preenchido').first().offset().top - 100
+                        }, 500);
                     }
+                });
+            }
+
+            return isValid;
+        }
+
+        // Get unfilled required fields
+        function getCamposNaoPreenchidos(step) {
+            const fields = [];
+
+            step.find('input[required]:not([type="hidden"]), select[required], textarea[required]').each(function() {
+                if (!this.value.trim() && $(this).closest('.toggleable-field').is(':visible')) {
+                    const label = $(this).closest('.pergunta-container').find('label').text().trim();
+                    fields.push(label);
+                }
+            });
+
+            step.find('.opcoes-box-container[required]').each(function() {
+                const container = $(this);
+                if (!container.find('input[type="hidden"]').val()) {
+                    const label = container.prev('label').text().trim();
+                    fields.push(label);
+                }
+            });
+
+            return fields;
+        }
+
+        // Attach event listeners for navigation buttons
+        $('.proximo').on('click', function() {
+            navigateSteps('next');
+        });
+
+        $('.voltar').on('click', function() {
+            navigateSteps('prev');
+        });
+
+        // Initialize toggles on page load
+        atualizarToggles();
+
+        const formulario = document.getElementById('formTermos');
+
+        formulario.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const btnEnviar = document.getElementById('btn-enviar');
+            btnEnviar.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
+            btnEnviar.disabled = true;
+
+            // Coletar dados da tabela CORRETAMENTE}
+
+
+            // Coletar dados usando a API do DataTables
+            const tableData = [];
+            tabelaItens.rows({
+                search: 'applied',
+                page: 'all'
+            }).every(function() {
+                const row = this.node();
+                const valorInput = $(row).find('input[name="valor_unitario[]"]').val() || '0,00';
+                const valorNumerico = valorInput.replace(/[^\d,]/g, '').replace(',', '.');
+
+                const rowData = {
+                    item: $(row).find('input[name="item[]"]').val() || '',
+                    unid: $(row).find('input[name="unid[]"]').val() || 'UN',
+                    quantidade: $(row).find('input[name="qtd[]"]').val() || 1,
+                    valor_unitario: valorNumerico || '0.00',
+                    descricao: $(row).find('input[name="descricao[]"]').val() || '',
+                    obs: $(row).find('input[name="obs[]"]').val() || ''
                 };
-                // Esconder todos os steps exceto o primeiro
-                document.querySelectorAll('.step-form:not(.active)').forEach(step => {
-                    step.style.display = 'none';
+                tableData.push(rowData);
+            });
+
+
+            const formData = new FormData(formulario);
+            formData.append('tableData', JSON.stringify(tableData));
+
+            fetch('salvar/enviar-email.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.text())
+                .then(data => {
+                    alert(data);
+                    btnEnviar.innerHTML = '<i class="fas fa-paper-plane"></i> Enviar por Email';
+                    btnEnviar.disabled = false;
+                })
+                .catch(error => {
+                    alert('Erro: ' + error.message);
+                    btnEnviar.innerHTML = '<i class="fas fa-paper-plane"></i> Enviar por Email';
+                    btnEnviar.disabled = false;
                 });
-
-                // Função para navegar entre steps
-                function navigateSteps(direction) {
-                    const currentStep = document.querySelector('.step-form.active');
-                    const currentStepNumber = parseInt(currentStep.dataset.step);
-                    const nextStepNumber = direction === 'next' ? currentStepNumber + 1 : currentStepNumber - 1;
-                    const nextStep = document.querySelector(`.step-form[data-step="${nextStepNumber}"]`);
-
-                    if (nextStep) {
-                        // Validação antes de avançar (opcional)
-                        if (direction === 'next') {
-                            if (!validateStep(currentStep)) {
-                                alert('Preencha todos os campos obrigatórios!');
-                                return; // Impede a navegação se inválido
-                            }
-                        }
-
-                            // Transição entre steps
-                            currentStep.classList.remove('active');
-                            currentStep.style.display = 'none';
-                            nextStep.classList.add('active');
-                            nextStep.style.display = 'block';
-                        }
-                    }
-
-                    // Validação do step atual (opcional)
-                    function validateStep(step) {
-                        let isValid = true;
-                        const requiredFields = step.querySelectorAll('input[required]:not([type="hidden"]), select[required], textarea[required]');
-
-                        requiredFields.forEach(field => {
-                            const value = field.value ? field.value.trim() : '';
-                            const isHiddenInput = field.closest('.toggleable-field')?.style.display === 'none';
-
-                            // Ignora campos ocultos
-                            if (isHiddenInput) return;
-
-                            if (!value) {
-                                field.classList.add('is-invalid');
-                                isValid = false;
-                            } else {
-                                field.classList.remove('is-invalid');
-                            }
-                        });
-
-                        return isValid;
-                    }
-
-                    // Event listeners para os botões
-                    document.querySelectorAll('.proximo').forEach(button => {
-                        button.addEventListener('click', () => navigateSteps('next'));
-                    });
-
-                    document.querySelectorAll('.voltar').forEach(button => {
-                        button.addEventListener('click', () => navigateSteps('prev'));
-                    });
-                    // Função para gerenciar os toggles
-                    function setupToggle(selectId, config) {
-                        const select = document.getElementById(selectId);
-                        const target = document.getElementById(config.target);
-
-                        if (!select || !target) return;
-
-                        const updateVisibility = () => {
-                            const shouldShow = config.triggerValues.includes(select.value);
-                            target.style.display = shouldShow ? 'block' : 'none';
-
-                            // Atualizar atributos required
-                            target.querySelectorAll('input, select, textarea').forEach(input => {
-                                input.required = shouldShow;
-                                input.disabled = !shouldShow;
-
-                                // Resetar validação Parsley se existir
-                                if (window.Parsley) {
-                                    $(input).parsley().reset();
-                                }
-                            });
-                        };
-
-                        select.addEventListener('change', updateVisibility);
-                        updateVisibility(); // Atualizar estado inicial
-                    }
-
-                    // Inicializar todos os toggles
-                    Object.keys(toggleConfig).forEach(selectId => {
-                        setupToggle(selectId, toggleConfig[selectId]);
-                    });
-
-                    // Inicializar Parsley
-                    if (window.Parsley) {
-                        $('#formTermos').parsley({
-                            errorClass: 'is-invalid',
-                            successClass: 'is-valid',
-                            errorsWrapper: '<div class="invalid-feedback"></div>',
-                            errorTemplate: '<span></span>'
-                        });
-                    }
-
-                    const formulario = document.getElementById('formTermos');
-
-                    formulario.addEventListener('submit', function(e) {
-                        e.preventDefault();
-
-                        const btnEnviar = document.getElementById('btn-enviar');
-                        btnEnviar.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
-                        btnEnviar.disabled = true;
-
-                        // Coletar dados da tabela CORRETAMENTE}
-
-
-                        // Coletar dados usando a API do DataTables
-                        const tableData = [];
-                        tabelaItens.rows({
-                            search: 'applied',
-                            page: 'all'
-                        }).every(function() {
-                            const row = this.node();
-                            const valorInput = $(row).find('input[name="valor_unitario[]"]').val() || '0,00';
-                            const valorNumerico = valorInput.replace(/[^\d,]/g, '').replace(',', '.');
-
-                            const rowData = {
-                                item: $(row).find('input[name="item[]"]').val() || '',
-                                unid: $(row).find('input[name="unid[]"]').val() || 'UN',
-                                quantidade: $(row).find('input[name="qtd[]"]').val() || 1,
-                                valor_unitario: valorNumerico || '0.00',
-                                descricao: $(row).find('input[name="descricao[]"]').val() || '',
-                                obs: $(row).find('input[name="obs[]"]').val() || ''
-                            };
-                            tableData.push(rowData);
-                        });
-
-
-                        const formData = new FormData(formulario);
-                        formData.append('tableData', JSON.stringify(tableData));
-
-                        fetch('salvar/enviar-email.php', {
-                                method: 'POST',
-                                body: formData
-                            })
-                            .then(response => response.text())
-                            .then(data => {
-                                alert(data);
-                                btnEnviar.innerHTML = '<i class="fas fa-paper-plane"></i> Enviar por Email';
-                                btnEnviar.disabled = false;
-                            })
-                            .catch(error => {
-                                alert('Erro: ' + error.message);
-                                btnEnviar.innerHTML = '<i class="fas fa-paper-plane"></i> Enviar por Email';
-                                btnEnviar.disabled = false;
-                            });
-                    });
-                });
-
-            // Função de exemplo para validação
-            function validarPasso(passo) {
-                const camposObrigatorios = passo.querySelectorAll('[required]');
-                let valido = true;
-
-                camposObrigatorios.forEach(campo => {
-                    if (!campo.value.trim()) {
-                        campo.closest('.pergunta-container').classList.add('campo-invalido');
-                        valido = false;
-                    }
-                });
-
-                return valido;
-            } // validate
+        }); // <-- Missing closing brace added here
+    }); // <-- Ensure this closing brace matches the opening $(document).ready
 </script>
